@@ -11,7 +11,8 @@ const config = {
         }
     },
     scene: [
-        GameScene
+        GameScene,
+        UIDebugScene
     ]
 };
 

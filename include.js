@@ -8,10 +8,12 @@ const w = [
 
     //Scene
     "sceneGame.js",
+    "sceneDebug.js",
 
     //function subroutine
+    "objPlayer.js",
+    "objEnemy.js",
     "mazemake.js",
-    //"routecheck.js",
 
     //main
     "main.js"

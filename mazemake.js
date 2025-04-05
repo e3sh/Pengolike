@@ -35,8 +35,10 @@ function mazemake(layer, w , h){
     const MAP_H = h;
 
     const BGBLOCK = 0;
-    const BGFLOOR = 35; 
+    const BGFLOOR = 44//35; 
     const BGWALL  = 7;
+
+    this.BG = {BLOCK:BGBLOCK, BONUS:10, FLOOR:BGFLOOR, WALL:BGWALL, MAP_W:MAP_W, MAP_H:MAP_H };
 
     const vx = [ 0, 1, 0, -1 ]; const vy = [ -1, 0, 1, 0];
 
