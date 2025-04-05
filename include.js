@@ -10,6 +10,7 @@ const w = [
     "sceneGame.js",
     "sceneDebug.js",
 
+    "setupAnims.js",
     //function subroutine
     "objPlayer.js",
     "objEnemy.js",

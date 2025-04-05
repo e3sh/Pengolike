@@ -73,22 +73,9 @@ class GameScene extends Phaser.Scene {
       this.gText = this.add.bitmapText(0, 16*MAP_H, 'font', 'PHASER 3');
       this.gText.setScale(1);
 
+      setupAnims( this );
       //
       this.mobs = this.physics.add.group();
-
-      this.anims.create({ key: 'bbox',
-        frames: this.anims.generateFrameNumbers('blocks', { start: 0, end: 0 }),
-        frameRate: 1, repeat: -1
-      });
-      this.anims.create({ key: 'break',
-        frames: this.anims.generateFrameNumbers('blocks', { start: 27, end: 35 }),
-        frameRate: 8, repeat: 0
-      });
-      this.anims.create({ key: 'hbox',
-        frames: this.anims.generateFrameNumbers('blocks', { start: 10, end: 19 }),
-        frameRate: 8, repeat: -1
-      });
-      
 
       this.blocks = this.physics.add.group();
       //this.blocks.create(100,100,"blocks");
@@ -97,6 +84,8 @@ class GameScene extends Phaser.Scene {
         child.setScale(1);
         child.anims.play("break");
       });
+
+      this.effcts = this.physics.add.group();
 
       this.layer.setCollisionBetween(0, 34, true, false, this.layer); 
       
@@ -139,7 +128,7 @@ class GameScene extends Phaser.Scene {
       }
       this.player = this.wp[0].gameobject;
 
-      for (let i=0; i<10; i++){
+      for (let i=0; i<4; i++){
         const w = new gObjectEnemy(this, 
           Phaser.Math.Between(1, this.maze.MW-2)*16+8, 
           Phaser.Math.Between(1, this.maze.MH-2)*16+8
@@ -147,6 +136,25 @@ class GameScene extends Phaser.Scene {
         w.create();
         this.wp.push(w);
       }
+
+      this.physics.add.collider(this.mobs, this.mobs);
+      this.physics.add.collider(this.mobs, this.layer);
+
+      const hitblock = (p, b)=>{
+        //p.setTint('0xff7f7f');
+        p.deadstate = true;
+        p.setVelocityX(b.body.velocity.x);
+        p.setVelocityY(b.body.velocity.y);
+        p.anims.play("kout_e");
+        //p.body.velocity = b.body.velocity;
+        //p.destroy();
+        //p.startFollow(b);
+      }
+      //this.physics.add.collider(this.mobs, this.blocks, hitblock, null, this);;
+
+      this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);;
+
+
 
       this.scene.launch("Debug");
     }
