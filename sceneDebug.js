@@ -5,6 +5,7 @@ class UIDebugScene extends Phaser.Scene {
 
     debugText;
 
+    friends;
     mobs;
     blocks;
     effcts;
@@ -19,6 +20,8 @@ class UIDebugScene extends Phaser.Scene {
       this.debugText = this.add.text(0, 0, "test",  { fontSize: '10px', fill: '#FFF' });
 
       const gamemain = this.scene.get("GameMain");
+
+      this.friends = gamemain.friends;
       this.mobs = gamemain.mobs;
       this.blocks = gamemain.blocks;
       this.effcts = gamemain.effcts;
@@ -33,10 +36,17 @@ class UIDebugScene extends Phaser.Scene {
       const poslist = (group)=>{
         let st = "";
         group.children.iterate(function (child) {
-          let f = Boolean(child.deadstate)?"*":" ";
-          st = st + f + Math.trunc(child.x) + "," + Math.trunc(child.y) + " " + Object.entries(child.body.velocity) + "\n";
+          let f = ("deadstate" in child)?"*":" ";
+
+          st = st 
+          + f 
+          + Math.trunc(child.x) 
+          + "," + Math.trunc(child.y) 
+          + " vx:" + Math.sign(child.body.velocity.x) 
+          + " vy:" + Math.sign(child.body.velocity.y) + "\n";
         });
         return st;
+
       };
       
       this.debugText.setText(//
@@ -45,6 +55,7 @@ class UIDebugScene extends Phaser.Scene {
         +"DELTA:"+String(game.loop.delta).substring(0,5)+"\n"
         //+" "+ ((this.maze.ready)?"WAIT":"BUSY") 
         +"FRAME:" + (game.getFrame()-this.ft) + "\n"
+        +"Pengo:" + this.friends.getLength() + "/" +this.friends.getTotalUsed() + "\n" + poslist(this.friends)
         +"Mob  :" + this.mobs.getLength() + "/" +this.mobs.getTotalUsed() + "\n" + poslist(this.mobs)
         +"Block:" + this.blocks.getLength() + "/" +this.blocks.getTotalUsed() + "\n" + poslist(this.blocks)
         +"Effct:" + this.effcts.getLength() + "/" +this.effcts.getTotalUsed() + "\n" + poslist(this.effcts)

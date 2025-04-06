@@ -7,6 +7,7 @@ class GameScene extends Phaser.Scene {
     rf;
 
     player;
+    friends;
     blocks;
     mobs;
 
@@ -20,6 +21,7 @@ class GameScene extends Phaser.Scene {
 
     stage;
     result;
+    killcount;
 
     preload() {
       this.load.image("bgtiles", "assets/Blocks.png");
@@ -37,6 +39,7 @@ class GameScene extends Phaser.Scene {
       this.load.start();
     }
   
+    ////======================
     create() {
       const config = {
         image: 'ascfont',
@@ -49,6 +52,7 @@ class GameScene extends Phaser.Scene {
       };
       this.cache.bitmapFont.add('font', Phaser.GameObjects.RetroFont.Parse(this, config));
     
+      //map create
       const MAP_W = 17;//17
       const MAP_H = 17;
 
@@ -70,13 +74,17 @@ class GameScene extends Phaser.Scene {
       this.maze = new mazemake(this.layer, MAP_W, MAP_H);
       this.maze.init();
 
+      //UI
       this.gText = this.add.bitmapText(0, 16*MAP_H, 'font', 'PHASER 3');
       this.gText.setScale(1);
 
+      //sprite anime setup
       setupAnims( this );
       //
-      this.mobs = this.physics.add.group();
 
+      //game object physics.sprite.body setup
+      this.friends = this.physics.add.group();
+      this.mobs = this.physics.add.group();
       this.blocks = this.physics.add.group();
       //this.blocks.create(100,100,"blocks");
       
@@ -87,6 +95,7 @@ class GameScene extends Phaser.Scene {
 
       this.effcts = this.physics.add.group();
 
+      //BG collison
       this.layer.setCollisionBetween(0, 34, true, false, this.layer); 
       
       const blockstop = (p, b)=>{
@@ -98,67 +107,73 @@ class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.blocks, this.layer, blockstop, null, this);
 
      //  Input Events
-     this.cursors = this.input.keyboard.createCursorKeys();
+      this.cursors = this.input.keyboard.createCursorKeys();
 
      // audio events
-     this.seffect = [];
+      this.seffect = [];
 
-     this.seffect[0] = this.sound.add("push");
-     this.seffect[1] = this.sound.add("pop");
-     this.seffect[2] = this.sound.add("break");
-     this.seffect[3] = this.sound.add("clear");
+      this.seffect[0] = this.sound.add("push");
+      this.seffect[1] = this.sound.add("pop");
+      this.seffect[2] = this.sound.add("break");
+      this.seffect[3] = this.sound.add("clear");
 
+      //game running status
       this.rf = false;
       this.ft = 0;
-     
+      
+      //camera setup
       this.cameras.main.zoom = 2.0;
       this.cameras.main.centerOn(132, 150);
+
+      //game running status
+      this.rf = false;
+      this.ft = 0;
 
       this.stage = 0;
       this.result = "...";
 
+      //Game Moving Object setup
       this.wp = [];
-      for (let i=0; i<1; i++){
-        const w = new gObjectPlayer(this, 
-          Phaser.Math.Between(1, this.maze.MW-2)*16+8, 
-          Phaser.Math.Between(1, this.maze.MH-2)*16+8
-        );
-        w.create();
-        this.wp.push(w);
-      }
+
+      this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
 
       for (let i=0; i<4; i++){
-        const w = new gObjectEnemy(this, 
-          Phaser.Math.Between(1, this.maze.MW-2)*16+8, 
-          Phaser.Math.Between(1, this.maze.MH-2)*16+8
-        );
-        w.create();
+        const w = new gObjectEnemy(this, 0, 0);
+        w.gameobject.deadstate = true;
+        w.gameobject.setVisible(false);
         this.wp.push(w);
       }
+
+      //collision setting
+      const hitenemy = (p, b)=>{
+        p.anims.play("kout_p");
+      }
+
+      this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
+      this.physics.add.collider(this.friends, this.layer);
+      this.physics.add.collider(this.friends, this.blocks);;
 
       this.physics.add.collider(this.mobs, this.mobs);
       this.physics.add.collider(this.mobs, this.layer);
 
       const hitblock = (p, b)=>{
-        //p.setTint('0xff7f7f');
-        p.deadstate = true;
-        p.setVelocityX(b.body.velocity.x);
-        p.setVelocityY(b.body.velocity.y);
-        p.anims.play("kout_e");
-        //p.body.velocity = b.body.velocity;
-        //p.destroy();
-        //p.startFollow(b);
+        if (!('deadstate' in p)){
+          p.setTint("0xff7f7f");
+          this.killcount++;
+          p.deadstate = true;
+          p.setVelocityX(b.body.velocity.x);
+          p.setVelocityY(b.body.velocity.y);
+          p.anims.play("kout_e");
+        }
       }
-      //this.physics.add.collider(this.mobs, this.blocks, hitblock, null, this);;
+      this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);
 
-      this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);;
-
-
-
+      //
       this.scene.launch("Debug");
     }
-  
+
+    ////======================
     update() {
 
       for (let i in this.wp){this.wp[i].update();}
@@ -172,24 +187,19 @@ class GameScene extends Phaser.Scene {
         if (!this.rf) {
           //this.seffect[3].play();
           this.stage++;
+          this.killcount = 0;
 
           this.maze.draw(true);
           this.rf = true;
         
-          let c=0;
-          while (c<3){
-            let wx = Phaser.Math.Between(1,(this.maze.MW-3)/2)*2;
-            let wy = Phaser.Math.Between(1,(this.maze.MH-3)/2)*2;
+          const bplist  = this.maze.blockposlist();
 
-            let t = this.layer.getTileAt(wx,wy);
-            console.log(wx + "," + wy);
-            if (t.index==0){
-              this.layer.putTileAt(this.maze.BG.BONUS,wx,wy);
-              c++;
-
-            }else{
-              console.log("retry");
-            }
+          for (let i=0; i<3; i++){
+            let num = Phaser.Math.Between(0, bplist.length-1);
+            let bp = bplist[num];  
+            this.layer.putTileAt(this.maze.BG.BONUS,bp.x,bp.y);
+            let w = bplist.splice(num,1);
+            //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
           }
         }
       }else{
@@ -236,7 +246,7 @@ class GameScene extends Phaser.Scene {
           } else countwork = 0;
         }
         //CLEAR CHECK
-        this.result = "";//" lx:" + count_x + " ly:" +count_y;
+        this.result = (this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
         if ((count_x >=3)||(count_y >=3)){
           this.player.anims.play('popup_p',true);
           this.seffect[3].play();

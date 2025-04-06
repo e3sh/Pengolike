@@ -25,20 +25,35 @@ function gObjectEnemy(scene, x, y){
 
     growcount = 0;
   }
+  this.create();
+
+  this.reborn = ()=>{
+    //console.log("reborn" + sprite.x + "," + sprite.y);
+    const bplist  = scene.maze.blockposlist();
+
+    if (bplist.length > 0){
+      let num = Phaser.Math.Between(0, bplist.length-1);
+      let bp = bplist[num];  
+      layer.putTileAt(BG.FLOOR,bp.x,bp.y);
+      sprite.x = bp.x*16+8;
+      sprite.y = bp.y*16+8;
+      effectbreak(sprite.x, sprite.y);
+    }else{
+      sprite.x = Phaser.Math.Between(1, BG.MAP_W-2)*16+8;
+      sprite.y = Phaser.Math.Between(1, BG.MAP_H-2)*16+8;
+    }
+    sprite.anims.play('popup_e',true);   
+    growcount = 0;
+    sprite.setVelocityX(0);
+    sprite.setVelocityY(0);
+    sprite.setVisible(true);
+    sprite.clearTint();
+  }
 
   this.update = ()=>{
 
-    const reborn = ()=>{
-      sprite.x = Phaser.Math.Between(1, BG.MAP_W-2)*16+8;
-      sprite.y = Phaser.Math.Between(1, BG.MAP_H-2)*16+8; 
-      sprite.anims.play('popup_e',true);   
-      growcount = 0;
-      sprite.setVelocityX(0);
-      sprite.setVelocityY(0);
-      sprite.clearTint();
-    }
-
-    if (Boolean(sprite.deadstate)){
+    if ("deadstate" in sprite){
+      if (!sprite.deadstate) return; 
       growcount = -120;
       //sprite.anims.play("kout_e");
       if ((sprite.body.velocity.x ==0)&&(sprite.body.velocity.y ==0)) {
@@ -47,7 +62,7 @@ function gObjectEnemy(scene, x, y){
         sprite.deadstate = false;
         scene.timerOneShot = scene.time.delayedCall(3000, ()=>{
           delete sprite.deadstate;
-          reborn();
+          this.reborn();
           }, this
         );
       }
@@ -106,26 +121,16 @@ function gObjectEnemy(scene, x, y){
         );
 
         if (!Boolean(gt)){
-          reborn();
+          this.reborn();
           return;
         }
 
         if (gt.index == BG.BLOCK){
-          let box = effcts.get(//create(
-          Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
-          Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8,"blocks");
-          box.setCollideWorldBounds(false);
-          box.setScale(1);
-          box.setPushable(false);
-          box.anims.play("break");
-          box.on(Phaser.Animations.Events.ANIMATION_COMPLETE, ()=>{
-            //box.setVisible(false);
-            //box.setActive(false);
-            box.destroy();
-          },this);
-          //seffect[2].play();
+          effectbreak(
+            Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
+            Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8
+          );
           layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
-        //}
         }
         //layer.putTileAtWorldXY(35, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
         //}
@@ -143,6 +148,17 @@ function gObjectEnemy(scene, x, y){
         //sprite.setVelocityX(0);
         //sprite.setVelocityY(0);
     }
+  }
+
+  function effectbreak(x,y){
+    let box = effcts.get(x, y,"blocks");
+      box.setCollideWorldBounds(false);
+      box.setScale(1);
+      box.setPushable(false);
+      box.anims.play("break");
+      box.on(Phaser.Animations.Events.ANIMATION_COMPLETE, ()=>{
+        box.destroy();
+    },this);
   }
 } 
 

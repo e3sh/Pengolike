@@ -23,7 +23,9 @@ function mazemake(layer, w , h){
     this.MH = h; 
 
     //this.draw = mapdraw;
-    this.draw = maptiledraw//mapcanvasdraw;
+    this.draw = maptiledraw;//mapcanvasdraw;
+
+    this.blockposlist = blockposlist;// 
 
     let mlog;
     let x; 
@@ -190,5 +192,18 @@ function mazemake(layer, w , h){
         }
 
         return flg;
+    }
+
+    function blockposlist(blocktype=BGBLOCK){
+
+        let list = [];
+        for (let i=1; i<MAP_H-1; i++){
+            for (let j=1; j<MAP_W-1; j++){
+                if (LAYER.getTileAt(j,i).index == blocktype){
+                    list.push({x:j, y:i});
+                }
+            }
+        }
+        return list;
     }
 }

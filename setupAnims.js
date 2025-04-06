@@ -37,6 +37,10 @@ function setupAnims(scene){
         frames: scene.anims.generateFrameNumbers('player', { start: 28, end: 29 }),
         frameRate: 4, repeat: -1
     });
+    scene.anims.create({ key: 'kout_p',
+        frames: scene.anims.generateFrameNumbers('player', { start: 16, end: 17 }),
+        frameRate: 4, repeat: -1
+    });
 
     //ENEMY
     scene.anims.create({ key: 'left_e',

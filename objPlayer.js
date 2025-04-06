@@ -5,18 +5,19 @@ function gObjectPlayer(scene, x, y){
 
   let inputc;
 
-  let mobs = scene.mobs;;
-  let layer = scene.layer;;
+  let friends = scene.friends;
+  let mobs = scene.mobs;
+  let layer = scene.layer;
   let blocks = scene.blocks;
   let effcts = scene.effcts;
 
   let BG = scene.maze.BG;
 
   let seffect;
-
+  
   this.create = ()=>{
 
-    sprite = mobs.get(x, y, "player");
+    sprite = friends.get(x, y, "player");
     sprite.setCollideWorldBounds(true);
     sprite.setScale(1);
 
@@ -27,6 +28,7 @@ function gObjectPlayer(scene, x, y){
 
     seffect = scene.seffect;
   }
+  this.create();
 
   this.update = ()=>{
 
