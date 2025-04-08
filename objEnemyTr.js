@@ -1,4 +1,4 @@
-function gObjectEnemy(scene, x, y){
+function gObjectEnemyTr(scene, x, y){
 
   let sprite;
   this.gameobject;
@@ -10,7 +10,14 @@ function gObjectEnemy(scene, x, y){
 
   let BG = scene.maze.BG;
 
+  let seffect;
+
   let growcount;
+
+  let route;
+  let routeresult;
+
+  let nextr; 
 
   this.create = ()=>{
 
@@ -22,6 +29,12 @@ function gObjectEnemy(scene, x, y){
     sprite.anims.play('popup_e',true);   
 
     growcount = 0;
+
+    route = [];
+    route[0] = new routecheck(scene.maze,0);
+    route[1] = new routecheck(scene.maze,1);
+
+    routeresult = [];
   }
   this.create();
 
@@ -46,6 +59,9 @@ function gObjectEnemy(scene, x, y){
     sprite.setVelocityY(0);
     sprite.setVisible(true);
     sprite.clearTint();
+
+    nextr = {x: sprite.x, y:sprite.y, vx:0, vy:0 };
+    routeresult = [];
   }
 
   this.update = ()=>{
@@ -78,7 +94,60 @@ function gObjectEnemy(scene, x, y){
       space:{isDwon: false}
     }
     
+    let b1 = ((Math.trunc((sprite.x+8)/16) == nextr.x+nextr.vx)&&
+      (Math.trunc((sprite.y+8)/16) == nextr.x+nextr.vy));
+
+    let b2 = ((Math.abs(sprite.body.velocity.x)<0.1)&&
+      (Math.abs(sprite.body.velocity.y)<0.1));
+    //b2 = true;
+
+    //if (b1 && b2 && growcount > 0) {growcount +=60;console.log(b1);}
+
     if (growcount < 60){ growcount++; return; }else{
+      if (routeresult.length < 1) {
+        route[0].create(
+          {x:Math.trunc((sprite.x)/16),y:Math.trunc((sprite.y)/16)}
+          ,{x:Math.trunc((scene.player.x)/16),y:Math.trunc(scene.player.y/16)}
+        );
+
+        route[1].create(
+          {x:Math.trunc((sprite.x)/16),y:Math.trunc((sprite.y)/16)}
+          ,{x:Math.trunc(scene.player.x/16),y:Math.trunc(scene.player.y/16)}
+        );
+
+        let wr = route[0].result();
+        let wl = route[1].result();
+
+        if (wr.length < wl.length) routeresult = wr; else routeresult = wl; 
+
+        //routeresult = route.result();
+        console.log(routeresult.length + " " + wr.length + "_" + wl.length
+          + " " + Math.trunc(sprite.x/16) 
+          + "," + Math.trunc(sprite.y/16)
+        );
+        for (let i in routeresult){
+          let r = routeresult[i];
+          effectbreak(r.x*16+8, r.y*16+8);
+        }
+      }else{
+        nextr = routeresult.pop();
+        console.log(
+          Object.entries(nextr) + " " + routeresult.length 
+          + " " + Math.trunc(sprite.x/16) + "/" + nextr.x 
+          + "," + Math.trunc(sprite.y/16) + "/" + nextr.y 
+        );//w.x + " " + w.y);
+        sprite.x = nextr.x*16+8;
+        sprite.y = nextr.y*16+8;
+      }
+
+      inputc = {
+        left:{isDown: (nextr.vx <0)?true:false},
+        right:{isDown: (nextr.vx>0)?true:false},
+        up:{isDown: (nextr.vy<0)?true:false},
+        down:{isDown: (nextr.vy>0)?true:false},
+        space:{isDown: (Math.random()*10>99)?true:false}
+      }
+      /*      
       inputc = {
         left:{isDown: (Math.random()*10>3)?true:false},
         right:{isDown: (Math.random()*10>6)?true:false},
@@ -86,6 +155,7 @@ function gObjectEnemy(scene, x, y){
         down:{isDown: (Math.random()*10>6)?true:false},
         space:{isDown: (Math.random()*10>8)?true:false}
       }
+      */
       growcount = 0;
     }
 
@@ -138,8 +208,8 @@ function gObjectEnemy(scene, x, y){
     
     if (mvmode.type){
 
-      sprite.setVelocityX(mvmode.vx*30);
-      sprite.setVelocityY(mvmode.vy*30);
+      sprite.setVelocityX(mvmode.vx*16);
+      sprite.setVelocityY(mvmode.vy*16);
       if (Boolean(mvmode.anim)){
         sprite.anims.play((mvmode.push?'push_':'')+mvmode.anim, true);}
         

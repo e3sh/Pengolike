@@ -7,15 +7,16 @@ const w = [
     "https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js",
 
     //Scene
-    "sceneGame.js",
-    "sceneDebug.js",
+    "scenes/sceneGame.js",
+    "scenes/sceneDebug.js",
 
     "setupAnims.js",
     //function subroutine
     "objPlayer.js",
     "objEnemy.js",
-    "mazemake.js",
-
+    "objEnemyTr.js",
+     "mazemake.js",
+    "routecheck.js",
     //main
     "main.js"
 ];

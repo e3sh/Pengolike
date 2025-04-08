@@ -26,6 +26,7 @@ function mazemake(layer, w , h){
     this.draw = maptiledraw;//mapcanvasdraw;
 
     this.blockposlist = blockposlist;// 
+    this.blockmap = blockmap;
 
     let mlog;
     let x; 
@@ -206,4 +207,17 @@ function mazemake(layer, w , h){
         }
         return list;
     }
+
+    function blockmap(){
+
+        let list = [];
+        for (let i=0; i<MAP_H; i++){
+            list[i] = [];
+            for (let j=0; j<MAP_W; j++){
+                list[i][j] = (LAYER.getTileAt(j,i).index != BGFLOOR);
+            }
+        }
+        return list;
+    }
+
 }

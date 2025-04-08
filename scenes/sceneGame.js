@@ -138,7 +138,12 @@ class GameScene extends Phaser.Scene {
       this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
 
-      for (let i=0; i<4; i++){
+      const w = new gObjectEnemyTr(this, 0, 0);
+      w.gameobject.deadstate = true;
+      w.gameobject.setVisible(false);
+      this.wp.push(w);
+
+      for (let i=0; i<3; i++){
         const w = new gObjectEnemy(this, 0, 0);
         w.gameobject.deadstate = true;
         w.gameobject.setVisible(false);
@@ -168,7 +173,9 @@ class GameScene extends Phaser.Scene {
         }
       }
       this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);
-
+      
+      //[SCROLL config]
+      //this.cameras.main.startFollow(this.player);
       //
       this.scene.launch("Debug");
     }
