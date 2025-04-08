@@ -19,11 +19,13 @@ function gObjectEnemyTr(scene, x, y){
 
   let nextr; 
 
+  let gamemain;
+
   this.create = ()=>{
 
     sprite = mobs.get(x, y, "enemy");
     sprite.setCollideWorldBounds(true);
-    sprite.setScale(1);
+    sprite.setSize(14,14);
 
     this.gameobject = sprite;
     sprite.anims.play('popup_e',true);   
@@ -58,8 +60,15 @@ function gObjectEnemyTr(scene, x, y){
     sprite.setVelocityX(0);
     sprite.setVelocityY(0);
     sprite.setVisible(true);
+    //sprite.isCircle = true;
     sprite.clearTint();
 
+    gamemain = scene.scene.get("GameMain");
+
+    gamemain.events.on("layerChange",()=>{
+
+      routeresult = []; //routeReSearch
+    });
     nextr = {x: sprite.x, y:sprite.y, vx:0, vy:0 };
     routeresult = [];
   }
@@ -97,20 +106,24 @@ function gObjectEnemyTr(scene, x, y){
     let b1 = ((Math.trunc((sprite.x+8)/16) == nextr.x+nextr.vx)&&
       (Math.trunc((sprite.y+8)/16) == nextr.x+nextr.vy));
 
-    let b2 = ((Math.abs(sprite.body.velocity.x)<0.1)&&
-      (Math.abs(sprite.body.velocity.y)<0.1));
+    let b2 = ((Math.abs(sprite.body.velocity.x)<1)&&
+      (Math.abs(sprite.body.velocity.y)<1));
     //b2 = true;
 
-    //if (b1 && b2 && growcount > 0) {growcount +=60;console.log(b1);}
-
-    if (growcount < 60){ growcount++; return; }else{
+    if (b1 && b2 && growcount > 0) 
+    {
+      growcount +=60;
+      //console.log(b1);
+    }
+    if (!scene.maze.ready) return;
+    if (growcount < 30){ growcount++; return; }else{
       if (routeresult.length < 1) {
-        route[0].create(
+        route[0].create(layer,
           {x:Math.trunc((sprite.x)/16),y:Math.trunc((sprite.y)/16)}
           ,{x:Math.trunc((scene.player.x)/16),y:Math.trunc(scene.player.y/16)}
         );
 
-        route[1].create(
+        route[1].create(layer,
           {x:Math.trunc((sprite.x)/16),y:Math.trunc((sprite.y)/16)}
           ,{x:Math.trunc(scene.player.x/16),y:Math.trunc(scene.player.y/16)}
         );
@@ -121,23 +134,34 @@ function gObjectEnemyTr(scene, x, y){
         if (wr.length < wl.length) routeresult = wr; else routeresult = wl; 
 
         //routeresult = route.result();
-        console.log(routeresult.length + " " + wr.length + "_" + wl.length
-          + " " + Math.trunc(sprite.x/16) 
-          + "," + Math.trunc(sprite.y/16)
-        );
+        //console.log(routeresult.length + " " + wr.length + "_" + wl.length
+        //  + " " + Math.trunc(sprite.x/16) 
+        //  + "," + Math.trunc(sprite.y/16)
+        //);
         for (let i in routeresult){
           let r = routeresult[i];
           effectbreak(r.x*16+8, r.y*16+8);
         }
       }else{
         nextr = routeresult.pop();
-        console.log(
-          Object.entries(nextr) + " " + routeresult.length 
-          + " " + Math.trunc(sprite.x/16) + "/" + nextr.x 
-          + "," + Math.trunc(sprite.y/16) + "/" + nextr.y 
-        );//w.x + " " + w.y);
-        sprite.x = nextr.x*16+8;
-        sprite.y = nextr.y*16+8;
+
+        //console.log(
+        //  Object.entries(nextr) + " " + routeresult.length 
+        //  + " " + Math.trunc(sprite.x/16) + "/" + nextr.x 
+        //  + "," + Math.trunc(sprite.y/16) + "/" + nextr.y 
+        //);//w.x + " " + w.y);
+
+        let gt = layer.getTileAtWorldXY(nextr.x*16+8, nextr.y*16+8);
+        if (gt.index != BG.FLOOR){
+          routeresult = [];
+        }else{
+          //sprite.setVelocityX(0);
+          //sprite.setVelocityY(0);
+
+          sprite.x = nextr.x*16+8;
+          sprite.y = nextr.y*16+8;
+          effectbreak(nextr.x*16+8, nextr.y*16+8);
+        }
       }
 
       inputc = {
@@ -208,8 +232,8 @@ function gObjectEnemyTr(scene, x, y){
     
     if (mvmode.type){
 
-      sprite.setVelocityX(mvmode.vx*16);
-      sprite.setVelocityY(mvmode.vy*16);
+      sprite.setVelocityX(mvmode.vx*30);
+      sprite.setVelocityY(mvmode.vy*30);
       if (Boolean(mvmode.anim)){
         sprite.anims.play((mvmode.push?'push_':'')+mvmode.anim, true);}
         

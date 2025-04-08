@@ -3,13 +3,19 @@
 function routecheck(maze, mode=0){
 
     //左手法の場合 0 / 右手の場合は1
-    const dvx = [[  0, 1, 0, -1], [  0,-1, 0, 1], [ 0,-1, 0, 1]];
-    const dvy = [[ -1, 0, 1,  0], [ -1, 0, 1, 0], [ 0, 0, 1, 0]];
-
+    const dvx = [[[ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1], [ -1, 0, 1, 0]] 
+                ,[[ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1], [ -1 ,0, 1, 0]]]; 
+ 
+    const dvy = [[[ -1, 0, 1,  0], [ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1]] 
+                ,[[ -1, 0, 1,  0], [ 0, -1, 0, 1], [ 1, 0, -1, 0], [ 0, 1, 0, -1]]]; 
+ 
     //let mode = 0;
 
-    const vx = dvx[mode];
-    const vy = dvy[mode];
+    const svx = dvx[mode];
+    const svy = dvy[mode];
+    let vx;
+    let vy;
+
     const dcolor = (mode == 0)?"red":"orange";
 
     let map;
@@ -21,12 +27,24 @@ function routecheck(maze, mode=0){
     let route = [];
     let workmap;
     
-    this.create = function(start, goal){
+    this.create = function(nowLayer, start, goal){
 
-        map = maze.blockmap(); 
+        map = maze.blockmap(nowLayer); 
 
         st = start;
         en = goal;
+
+        let crv = 0; //0:u 1:l 2:d 3:r
+        let lr = en.x - st.x;
+        let ud = en.y - st.y;
+        if (lr > ud){//X axis 
+            crv = (lr>0)?1:3;
+        }else{//Y axis
+            crv = (ud>0)?2:0;
+        }
+
+        vx = svx[crv];
+        vy = svy[crv];
 
         route = [];
 
@@ -72,9 +90,13 @@ function routecheck(maze, mode=0){
             let wnum = workmap[y][x];
 
             let ri = -1;
+            let wcnum = wnum;
             for (let i in vx){
                 if (workmap[y+vy[i]][x+vx[i]] < wnum){
-                    ri = i;
+                    if (wcnum > workmap[y+vy[i]][x+vx[i]]){
+                        ri = i;
+                        wcnum = workmap[y+vy[i]][x+vx[i]];
+                    }
                 }
             }
             //console.log("ri"+ri);

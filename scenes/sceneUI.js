@@ -2,6 +2,7 @@ class uiScene extends Phaser.Scene {
   constructor() {
     super({key:"UI", active: false});
   }
+    /*
     score;
     maxscore;
     stage;
@@ -10,14 +11,19 @@ class uiScene extends Phaser.Scene {
     goverText;
     retryText;
     debugText;
-
+  
     cursors;
     zkey;
+  */
+    gameMain;
+    stage;
+    result;
 
   preload() {
   }
 
   create() {
+    /*
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#FFF' });
     this.goverText = this.add.text(240, 240, 'Game Over', { fontSize: '64px', fill: '#FFF' });
     this.retryText = this.add.text(200, 310, 'Retry Space key', { fontSize: '48px', fill: '#FFF' });
@@ -31,7 +37,18 @@ class uiScene extends Phaser.Scene {
 
     this.goverText.setVisible(false);
     this.retryText.setVisible(false);
+    */
+      //UI
+      this.gText = this.add.bitmapText(0, 600-16, 'font', 'PHASER 3');
+      this.gText.setScale(2);
 
+      this.gameMain = this.scene.get("GameMain");
+
+      this.stage = this.gameMain.stage;
+      this.result = this.gameMain.result;
+
+      this.cameras.zoom = 2.0;
+    /*
     this.score = 0;
     this.maxscore = 0;
 
@@ -43,7 +60,7 @@ class uiScene extends Phaser.Scene {
       else 
         this.scoreText.setText('Score: ' + score); 
     }
-
+    
     // event section.
     const gameMain = this.scene.get("GameMain");
     // addScore
@@ -86,14 +103,29 @@ class uiScene extends Phaser.Scene {
     })
     //
     gameMain.events.on("NextStage",()=>{
-  
       this.stage++;
-    })
+    });
+    */
+  
+  
+  
+  
   }
 
   update() {
+    this.stage = this.gameMain.stage;
+    this.result = this.gameMain.result;
+
+    this.gText.setText(
+      "STAGE:" + this.stage + " "
+      +this.result
+    );
+    /*
     this.debugText.setText("STAGE:" + this.stage + " FPS:"+Math.trunc(1000/game.loop.delta)+" FRAME:"+game.getFrame()+" DELTA:"+game.loop.delta
     );//game.getTime();
     this.debugText.setVisible(this.zkey);
+    */
+
+
   }
 }

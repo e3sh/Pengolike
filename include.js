@@ -4,10 +4,12 @@
 
 const w = [
     //Phaser3 File
-    "https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js",
+    //"https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js",
+    "phaser/phaser.min.js",
 
     //Scene
     "scenes/sceneGame.js",
+    "scenes/sceneUI.js",
     "scenes/sceneDebug.js",
 
     "setupAnims.js",

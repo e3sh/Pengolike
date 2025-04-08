@@ -208,14 +208,18 @@ function mazemake(layer, w , h){
         return list;
     }
 
-    function blockmap(){
+    function blockmap(nowLAYER){
 
+        let st = "";
         let list = [];
         for (let i=0; i<MAP_H; i++){
             list[i] = [];
+            st = "";
             for (let j=0; j<MAP_W; j++){
-                list[i][j] = (LAYER.getTileAt(j,i).index != BGFLOOR);
+                list[i][j] = (nowLAYER.getTileAt(j,i).index != BGFLOOR)?true:false;
+                st = st + ((list[i][j])?"*":"_");
             }
+            //console.log(i + ":" + st);
         }
         return list;
     }

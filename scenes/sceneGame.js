@@ -14,6 +14,7 @@ class GameScene extends Phaser.Scene {
     layer;
 
     cursors;
+    zkey;
 
     seffect;
 
@@ -102,12 +103,18 @@ class GameScene extends Phaser.Scene {
         this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
         this.seffect[1].play();
         p.destroy();
+        this.events.emit("layerChange");
       }
       
       this.physics.add.collider(this.blocks, this.layer, blockstop, null, this);
 
      //  Input Events
       this.cursors = this.input.keyboard.createCursorKeys();
+
+      const keyobj_z =  this.input.keyboard.addKey("Z");
+      this.zkey = {push:false, lock:false};
+      keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
+      keyobj_z.on("up", ()=> {this.zkey.push = false;});
 
      // audio events
       this.seffect = [];
@@ -177,6 +184,7 @@ class GameScene extends Phaser.Scene {
       //[SCROLL config]
       //this.cameras.main.startFollow(this.player);
       //
+      this.scene.launch("UI");
       this.scene.launch("Debug");
     }
 
@@ -208,8 +216,9 @@ class GameScene extends Phaser.Scene {
             let w = bplist.splice(num,1);
             //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
           }
+          this.zkey.lock = false;
         }
-      }else{
+      }else{        
         //map genarate anim drawing (maze ready == false)
         this.maze.draw(false);
         this.maze.step();this.maze.step();
@@ -260,6 +269,16 @@ class GameScene extends Phaser.Scene {
           this.result ="CLEAR";
           this.maze.init();
           this.rf = false;
+          this.events.emit("clear");
+        }
+
+        if (this.zkey.push){
+          this.player.anims.play('popup_p',true);
+          this.seffect[2].play();
+          this.result ="RESET";
+          this.maze.init();
+          this.rf = false;
+          this.stage--;
           this.events.emit("clear");
         }
 
