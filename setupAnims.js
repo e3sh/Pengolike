@@ -100,9 +100,6 @@ function setupAnims(scene){
         frameRate: 4, repeat: -1
     });
 
-
-
-
     //BLOCKS
     scene.anims.create({ key: 'bbox',
         frames: scene.anims.generateFrameNumbers('blocks', { start: 0, end: 0 }),
@@ -114,6 +111,10 @@ function setupAnims(scene){
     });
     scene.anims.create({ key: 'hbox',
         frames: scene.anims.generateFrameNumbers('blocks', { start: 10, end: 19 }),
+        frameRate: 8, repeat: -1
+    });
+    scene.anims.create({ key: 'flag',
+        frames: scene.anims.generateFrameNumbers('blocks', { start: 49, end: 49 }),
         frameRate: 8, repeat: -1
     });
 

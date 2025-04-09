@@ -41,7 +41,7 @@ function mazemake(layer, w , h){
     const BGFLOOR = 44//35; 
     const BGWALL  = 7;
 
-    this.BG = {BLOCK:BGBLOCK, BONUS:10, FLOOR:BGFLOOR, WALL:BGWALL, MAP_W:MAP_W, MAP_H:MAP_H };
+    this.BG = {BLOCK:BGBLOCK, BONUS:10, FLOOR:BGFLOOR, WALL:BGWALL, FLAG:49, BFLAG:50, MAP_W:MAP_W, MAP_H:MAP_H };
 
     const vx = [ 0, 1, 0, -1 ]; const vy = [ -1, 0, 1, 0];
 
@@ -217,6 +217,7 @@ function mazemake(layer, w , h){
             st = "";
             for (let j=0; j<MAP_W; j++){
                 list[i][j] = (nowLAYER.getTileAt(j,i).index != BGFLOOR)?true:false;
+                if (nowLAYER.getTileAt(j,i).index == this.BG.FLAG) list[i][j] = false;
                 st = st + ((list[i][j])?"*":"_");
             }
             //console.log(i + ":" + st);

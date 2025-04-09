@@ -2,6 +2,7 @@ function gObjectPlayer(scene, x, y){
 
   let sprite;
   this.gameobject;
+  this.active = false;
 
   let inputc;
 
@@ -31,6 +32,8 @@ function gObjectPlayer(scene, x, y){
   this.create();
 
   this.update = ()=>{
+    if (!this.active) return;
+    if (Boolean(this.gameobject.pausestate)) return;
 
     let mvmode = {type:false, vx:0, vy:0, push:false };
 
@@ -63,7 +66,7 @@ function gObjectPlayer(scene, x, y){
           sprite.x + mvmode.vx*10, 
           sprite.y + mvmode.vy*10
         );
-        if ((gt.index == BG.BLOCK)||(gt.index == BG.BONUS)) {//0=BLUEWALL
+        if ((gt.index == BG.BLOCK)||(gt.index == BG.BONUS)||(gt.index == BG.FLAG)) {//0=BLUEWALL
           let gt2 = layer.getTileAtWorldXY(sprite.x + mvmode.vx*26, sprite.y + mvmode.vy*26);
           if (gt2.index == BG.FLOOR){
             //layer.putTileAtWorldXY(gt.index, sprite.x + mvmode.vx*26, sprite.y + mvmode.vy*26);
@@ -77,7 +80,12 @@ function gObjectPlayer(scene, x, y){
             box.setCollideWorldBounds(false);
             box.setScale(1);
             box.setPushable(true);
-            if (blocktype==0) {box.anims.play("bbox");}else{box.anims.play("hbox");};
+            if (blocktype==BG.BLOCK) {
+              box.anims.play("bbox");
+            }else{
+              if (blocktype==BG.BONUS) box.anims.play("hbox");
+              if (blocktype==BG.FLAG ) box.anims.play("flag");
+            };
             box.setVelocityX(mvmode.vx*300);
             box.setVelocityY(mvmode.vy*300);
             box.boxtype = blocktype;

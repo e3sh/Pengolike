@@ -1,14 +1,14 @@
 // routeCheck
 // mode:0/1 
 function routecheck(maze, mode=0){
-
+    
     //左手法の場合 0 / 右手の場合は1
     const dvx = [[[ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1], [ -1, 0, 1, 0]] 
-                ,[[ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1], [ -1 ,0, 1, 0]]]; 
+                ,[[ 0, -1, 0, 1], [ 1, 0, -1, 0], [ 0,  1, 0, -1], [ -1 ,0, 1, 0]]]; 
  
     const dvy = [[[ -1, 0, 1,  0], [ 0, 1, 0, -1], [ 1, 0, -1, 0], [ 0, -1, 0, 1]] 
                 ,[[ -1, 0, 1,  0], [ 0, -1, 0, 1], [ 1, 0, -1, 0], [ 0, 1, 0, -1]]]; 
- 
+    
     //let mode = 0;
 
     const svx = dvx[mode];
@@ -34,6 +34,7 @@ function routecheck(maze, mode=0){
         st = start;
         en = goal;
 
+        
         let crv = 0; //0:u 1:l 2:d 3:r
         let lr = en.x - st.x;
         let ud = en.y - st.y;
@@ -42,6 +43,8 @@ function routecheck(maze, mode=0){
         }else{//Y axis
             crv = (ud>0)?2:0;
         }
+        
+        //let crv = 0;
 
         vx = svx[crv];
         vy = svy[crv];
@@ -64,6 +67,8 @@ function routecheck(maze, mode=0){
         }
 
         routedataCreate(st.x, st.y);
+
+        //console.log("mode:"+ mode + " svx:"+ crv+" result:" + route.length);
 
         this.busy = false;
         this.ready = true;

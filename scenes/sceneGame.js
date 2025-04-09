@@ -23,6 +23,7 @@ class GameScene extends Phaser.Scene {
     stage;
     result;
     killcount;
+    basehp;
 
     preload() {
       this.load.image("bgtiles", "assets/Blocks.png");
@@ -77,8 +78,8 @@ class GameScene extends Phaser.Scene {
       this.maze.init();
 
       //UI
-      this.gText = this.add.bitmapText(0, 16*MAP_H, 'font', 'PHASER 3');
-      this.gText.setScale(1);
+      //this.gText = this.add.bitmapText(0, 16*MAP_H, 'font', 'PHASER 3');
+      //this.gText.setScale(1);
 
       //sprite anime setup
       setupAnims( this );
@@ -99,6 +100,7 @@ class GameScene extends Phaser.Scene {
 
       //BG collison
       this.layer.setCollisionBetween(0, 34, true, false, this.layer); 
+      this.layer.setCollisionBetween(49,50, true, false, this.layer); 
       
       const blockstop = (p, b)=>{
         this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
@@ -147,13 +149,13 @@ class GameScene extends Phaser.Scene {
       this.player = this.wp[0].gameobject;
       this.player.setSize(15,15);
 
-      const w = new gObjectEnemyTr(this, 0, 0);
-      w.gameobject.deadstate = true;
-      w.gameobject.setVisible(false);
-      this.wp.push(w);
+      //const w = new gObjectEnemyTr(this, 0, 0);
+      //w.gameobject.deadstate = true;
+      //w.gameobject.setVisible(false);
+      //this.wp.push(w);
 
-      for (let i=0; i<3; i++){
-        const w = new gObjectEnemy(this, 0, 0);
+      for (let i=0; i<4; i++){
+        const w = new gObjectEnemyTr(this, 0, 0);
         w.gameobject.deadstate = true;
         w.gameobject.setVisible(false);
         this.wp.push(w);
@@ -161,10 +163,17 @@ class GameScene extends Phaser.Scene {
 
       //collision setting
       const hitenemy = (p, b)=>{
-        p.anims.play("kout_p");
+        if (!Boolean(p.pausestate))p.anims.play("kout_p");
+        p.pausestate = true;
+        this.timerOneShot = this.time.delayedCall(500, ()=>{
+          p.pausestate = false;
+          }, this
+        );
+
       }
 
-      this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
+      this.physics.add.collider(this.friends, this.mobs, hitenemy,null, this);
+      //this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
       this.physics.add.collider(this.friends, this.layer);
       this.physics.add.collider(this.friends, this.blocks);;
 
@@ -188,6 +197,14 @@ class GameScene extends Phaser.Scene {
       //
       this.scene.launch("UI");
       this.scene.launch("Debug");
+
+      this.events.on("baseattack",()=>{
+        this.basehp--;
+        if (this.basehp<=0){
+          let bf = this.maze.blockposlist(this.maze.BG.FLAG);
+          this.layer.putTileAt(this.maze.BG.BFLAG, bf[0].x, bf[0].y);
+        }
+      });
     }
 
     ////======================
@@ -195,16 +212,17 @@ class GameScene extends Phaser.Scene {
 
       for (let i in this.wp){this.wp[i].update();}
      
-      this.gText.setText(
-        "STAGE:" + this.stage + " "
-        +this.result
-      );
+      //this.gText.setText(
+      //  "STAGE:" + this.stage + " "
+      //  +this.result
+      //);
       
       if (this.maze.ready){
         if (!this.rf) {
           //this.seffect[3].play();
           this.stage++;
           this.killcount = 0;
+          this.basehp = 100;
 
           this.maze.draw(true);
           this.rf = true;
@@ -218,7 +236,18 @@ class GameScene extends Phaser.Scene {
             let w = bplist.splice(num,1);
             //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
           }
+          for (let i=0; i<3; i++){
+            let num = Phaser.Math.Between(0, bplist.length-1);
+            let bp = bplist[num];  
+            this.layer.putTileAt(this.maze.BG.WALL,bp.x,bp.y);
+            let w = bplist.splice(num,1);
+            //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
+          }
+          this.layer.putTileAt(this.maze.BG.FLAG, 9, 13);
+
           this.zkey.lock = false;
+
+          for (let i in this.wp){this.wp[i].active = true;}
         }
       }else{        
         //map genarate anim drawing (maze ready == false)
@@ -227,51 +256,70 @@ class GameScene extends Phaser.Scene {
 
         this.player.x = this.maze.MW/2*16+16;
         this.player.y = this.maze.MH/2*16+16;
+
+        for (let i in this.wp){
+          this.wp[i].active = false;
+          if (i != 0){
+            this.wp[i].gameobject.deadstate = true;
+            this.wp[i].gameobject.setVisible(false);
+            this.wp[i].gameobject.x = 0;
+            this.wp[i].gameobject.y = 0;
+          }
+
+        }
       }
       
       if (this.rf){
-        const BGBONUS = 10;
-        let wx,wy;
 
-        //first Bonus Block Search
-        FBBS_LABEL:
-        for (let i=0; i<this.maze.MH; i++){
-          for (let j=0; j<this.maze.MW; j++){
-            let gt = this.layer.getTileAt( j ,i);
-            if (gt.index == BGBONUS){
-              wx = j; wy = i;
-              break FBBS_LABEL;
+        this.result = (this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
+
+        const BG = this.maze.BG;
+  
+        let bb = this.maze.blockposlist(BG.BONUS);
+        let bf = this.maze.blockposlist(BG.FLAG);
+  
+        if (bb.length >= 3){
+          let wx,wy;
+          //first Bonus Block Search
+          FBBS_LABEL:
+          for (let i=0; i<this.maze.MH; i++){
+            for (let j=0; j<this.maze.MW; j++){
+              let gt = this.layer.getTileAt( j ,i);
+              if (gt.index == BG.BONUS){
+                wx = j; wy = i;
+                break FBBS_LABEL;
+              }
             }
           }
-        }
 
-        let count_x, count_y, countwork;
-        count_x = 0; countwork = 0;
-        for(let i=0; i<this.maze.MW; i++){
-          let gt = this.layer.getTileAt( i, wy);
-          if (gt.index == BGBONUS){
-            countwork++;
-            if (count_x < countwork) count_x = countwork;
-          } else countwork = 0;
-        }
+          let count_x, count_y, countwork;
+          count_x = 0; countwork = 0;
+          for(let i=0; i<this.maze.MW; i++){
+            let gt = this.layer.getTileAt( i, wy);
+            if (gt.index == BG.BONUS){
+              countwork++;
+              if (count_x < countwork) count_x = countwork;
+            } else countwork = 0;
+          }
 
-        count_y = 0; countwork = 0;
-        for(let i=0; i<this.maze.MH; i++){
-          let gt = this.layer.getTileAt(wx, i);
-          if (gt.index == BGBONUS){
-            countwork++;
-            if (count_y < countwork) count_y = countwork;
-          } else countwork = 0;
-        }
-        //CLEAR CHECK
-        this.result = (this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
-        if ((count_x >=3)||(count_y >=3)){
-          this.player.anims.play('popup_p',true);
-          this.seffect[3].play();
-          this.result ="CLEAR";
-          this.maze.init();
-          this.rf = false;
-          this.events.emit("clear");
+          count_y = 0; countwork = 0;
+          for(let i=0; i<this.maze.MH; i++){
+            let gt = this.layer.getTileAt(wx, i);
+            if (gt.index == BG.BONUS){
+              countwork++;
+              if (count_y < countwork) count_y = countwork;
+            } else countwork = 0;
+          }
+          //CLEAR CHECK
+          this.result = (this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
+          if ((count_x >=3)||(count_y >=3)){
+            this.player.anims.play('popup_p',true);
+            this.seffect[3].play();
+            this.result ="CLEAR";
+            this.maze.init();
+            this.rf = false;
+            this.events.emit("clear");
+          }
         }
 
         if (this.zkey.push){
@@ -282,6 +330,11 @@ class GameScene extends Phaser.Scene {
           this.rf = false;
           this.stage--;
           this.events.emit("clear");
+          //console.log("z  --");
+        }
+
+        if (this.rf){
+          this.result += " B:" + bb.length + ",F:" + bf.length;
         }
 
       }

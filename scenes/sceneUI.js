@@ -18,6 +18,7 @@ class uiScene extends Phaser.Scene {
     gameMain;
     stage;
     result;
+    basehp;
 
   preload() {
   }
@@ -115,9 +116,10 @@ class uiScene extends Phaser.Scene {
   update() {
     this.stage = this.gameMain.stage;
     this.result = this.gameMain.result;
+    this.basehp = this.gameMain.basehp;
 
     this.gText.setText(
-      "STAGE:" + this.stage + " "
+      "STAGE:" + this.stage + " BASEHP:" + this.basehp + " " 
       +this.result
     );
     /*
