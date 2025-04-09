@@ -29,6 +29,7 @@ class GameScene extends Phaser.Scene {
       this.load.image('ascfont', 'assets/aschr.png');
 
       this.load.spritesheet('player', 'assets/Pengo.png', { frameWidth: 16, frameHeight: 16 });
+
       this.load.spritesheet('blocks', 'assets/Blocks.png', { frameWidth: 16, frameHeight: 16 });
       this.load.spritesheet('enemy', 'assets/Enemy.png', { frameWidth: 16, frameHeight: 16 });
 
@@ -144,6 +145,7 @@ class GameScene extends Phaser.Scene {
 
       this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
+      this.player.setSize(15,15);
 
       const w = new gObjectEnemyTr(this, 0, 0);
       w.gameobject.deadstate = true;

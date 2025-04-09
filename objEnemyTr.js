@@ -56,7 +56,7 @@ function gObjectEnemyTr(scene, x, y){
       sprite.y = Phaser.Math.Between(1, BG.MAP_H-2)*16+8;
     }
     sprite.anims.play('popup_e',true);   
-    growcount = 0;
+    growcount = -120;
     sprite.setVelocityX(0);
     sprite.setVelocityY(0);
     sprite.setVisible(true);
@@ -66,8 +66,12 @@ function gObjectEnemyTr(scene, x, y){
     gamemain = scene.scene.get("GameMain");
 
     gamemain.events.on("layerChange",()=>{
-
+      growcount  = -60;
       routeresult = []; //routeReSearch
+      //sprite.setVelocityX(0);
+      //sprite.setVelocityY(0);
+      
+      //sprite.anims.play('down_e',true);  
     });
     nextr = {x: sprite.x, y:sprite.y, vx:0, vy:0 };
     routeresult = [];
