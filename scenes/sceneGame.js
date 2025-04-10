@@ -38,6 +38,10 @@ class GameScene extends Phaser.Scene {
       this.load.audio("pop", ["assets/pop.mp3"]);
       this.load.audio("break", ["assets/break.mp3"]);
       this.load.audio("clear", ["assets/clear.mp3"]);
+      this.load.audio("bow", ["assets/08bow.mp3"]);
+      this.load.audio("use", ["assets/10use.mp3"]);
+      this.load.audio("get", ["assets/11hit.mp3"]);
+      this.load.audio("damage", ["assets/12damage.mp3"]);
 
       this.load.start();
     }
@@ -126,6 +130,10 @@ class GameScene extends Phaser.Scene {
       this.seffect[1] = this.sound.add("pop");
       this.seffect[2] = this.sound.add("break");
       this.seffect[3] = this.sound.add("clear");
+      this.seffect[4] = this.sound.add("use");
+      this.seffect[5] = this.sound.add("get");
+      this.seffect[6] = this.sound.add("bow");
+      this.seffect[7] = this.sound.add("damage");
 
       //game running status
       this.rf = false;
@@ -163,7 +171,21 @@ class GameScene extends Phaser.Scene {
 
       //collision setting
       const hitenemy = (p, b)=>{
-        if (!Boolean(p.pausestate))p.anims.play("kout_p");
+        if ("deadstate" in b){
+          this.basehp++;
+          b.x = 0;
+          b.y = 0;
+          this.seffect[4].play();
+          return;    
+        } 
+
+        if ("pausestate" in p){
+          if (!p.pausestate) this.basehp--;
+        }
+        if (!Boolean(p.pausestate)){
+          p.anims.play("kout_p");
+          this.seffect[6].play();
+        }
         p.pausestate = true;
         this.timerOneShot = this.time.delayedCall(500, ()=>{
           p.pausestate = false;
@@ -200,6 +222,7 @@ class GameScene extends Phaser.Scene {
 
       this.events.on("baseattack",()=>{
         this.basehp--;
+        this.seffect[7].play();
         if (this.basehp<=0){
           let bf = this.maze.blockposlist(this.maze.BG.FLAG);
           this.layer.putTileAt(this.maze.BG.BFLAG, bf[0].x, bf[0].y);

@@ -48,6 +48,14 @@ function gObjectEnemyTr(scene, x, y){
     //console.log("reborn" + sprite.x + "," + sprite.y);
     const bplist  = scene.maze.blockposlist();
 
+    //check flag area 5*5
+    const fllist = scene.maze.blockposlist(BG.FLAG);
+    if (fllist.length > 0){
+      for (let i in bplist){
+        //check func 5*5
+      }
+      console.log("FL"+fllist.length + "  BL"+bplist.length);
+    }
     if (bplist.length > 0){
       let num = Phaser.Math.Between(0, bplist.length-1);
       let bp = bplist[num];  
@@ -205,7 +213,7 @@ function gObjectEnemyTr(scene, x, y){
         let gt2 = layer.getTileAtWorldXY((nextr.x+nextr.vx)*16+8, (nextr.y+nextr.vy)*16+8);
         //console.log(gt2.index + " " + gt.index);
         if (gt.index != BG.FLOOR){
-          runmode = 2;
+          runmode = 1;
           routeresult = [];
         }else{
           //sprite.setVelocityX(0);

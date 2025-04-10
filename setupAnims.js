@@ -35,7 +35,7 @@ function setupAnims(scene){
     });
     scene.anims.create({ key: 'popup_p',
         frames: scene.anims.generateFrameNumbers('player', { start: 28, end: 29 }),
-        frameRate: 4, repeat: -1
+        frameRate: 3, repeat: -1
     });
     scene.anims.create({ key: 'kout_p',
         frames: scene.anims.generateFrameNumbers('player', { start: 16, end: 17 }),
@@ -93,7 +93,7 @@ function setupAnims(scene){
     });
     scene.anims.create({ key: 'popup_e',
         frames: scene.anims.generateFrameNumbers('enemy', { start: 0, end: 5 }),
-        frameRate: 4, repeat: 0
+        frameRate: 3, repeat: 0
     });
     scene.anims.create({ key: 'kout_e',
         frames: scene.anims.generateFrameNumbers('enemy', { start: 6, end: 7 }),
