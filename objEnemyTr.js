@@ -47,18 +47,27 @@ function gObjectEnemyTr(scene, x, y){
   this.reborn = ()=>{
     //console.log("reborn" + sprite.x + "," + sprite.y);
     const bplist  = scene.maze.blockposlist();
+    const fllist = scene.maze.blockposlist(BG.FLAG);
+    //console.log("st FL"+fllist.length + "  BP"+bplist.length);
 
     //check flag area 5*5
-    const fllist = scene.maze.blockposlist(BG.FLAG);
+    let cblist = [];
     if (fllist.length > 0){
       for (let i in bplist){
+        if ((Math.abs(fllist[0].x - bplist[i].x)>3)||
+        (Math.abs(fllist[0].y - bplist[i].y)>3)){
+          cblist.push(bplist[i]);
+        }
         //check func 5*5
       }
-      console.log("FL"+fllist.length + "  BL"+bplist.length);
+      console.log("s FL"+fllist.length + " BL:"+cblist.length + "/" + bplist.length);
+      for (let i in cblist){
+        effectbreak(cblist[i].x*16+8, cblist[i].y*16+8);
+      }
     }
-    if (bplist.length > 0){
-      let num = Phaser.Math.Between(0, bplist.length-1);
-      let bp = bplist[num];  
+    if (cblist.length > 0){
+      let num = Phaser.Math.Between(0, cblist.length-1);
+      let bp = cblist[num];  
       layer.putTileAt(BG.FLOOR,bp.x,bp.y);
       sprite.x = bp.x*16+8;
       sprite.y = bp.y*16+8;

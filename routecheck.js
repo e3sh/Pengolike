@@ -33,42 +33,44 @@ function routecheck(maze, mode=0){
 
         st = start;
         en = goal;
-
         
-        let crv = 0; //0:u 1:l 2:d 3:r
-        let lr = en.x - st.x;
-        let ud = en.y - st.y;
-        if (lr > ud){//X axis 
-            crv = (lr>0)?1:3;
-        }else{//Y axis
-            crv = (ud>0)?2:0;
-        }
-        
-        //let crv = 0;
+        let wstr = "";
+        let wroute = [];
 
-        vx = svx[crv];
-        vy = svy[crv];
+        for (let i = 0; i <=3; i++)
+        {
+            vx = svx[i];
+            vy = svy[i];
 
-        route = [];
+            route = [];
 
-        this.busy = true;
-        this.ready = false;
+            this.busy = true;
+            this.ready = false;
 
-        workmap = fillarray(map[0].length, map.length, 0);
+            workmap = fillarray(map[0].length, map.length, 0);
 
-        for (let i in map){
-            for (let j in map[i]){
-                if (map[i][j]){
-                    workmap[i][j] = map[0].length*map.length;//wall
-                } else {
-                    workmap[i][j] = 0;
+            for (let i in map){
+                for (let j in map[i]){
+                    if (map[i][j]){
+                        workmap[i][j] = map[0].length*map.length;//wall
+                    } else {
+                        workmap[i][j] = 0;
+                    }
                 }
             }
+            routedataCreate(st.x, st.y);
+
+            wroute[i] = route;
+            wstr = wstr + " " + i + ":" + route.length;
         }
+        let rmin = 0; 
+        for (let i in wroute){
+            if (wroute[i].length < wroute[rmin].length) rmin = i;
+        }
+        route = wroute[rmin];
+        wstr = wstr + " [" + rmin + "]"; 
 
-        routedataCreate(st.x, st.y);
-
-        //console.log("mode:"+ mode + " svx:"+ crv+" result:" + route.length);
+        //console.log("mode:"+ mode + " result:" + wstr);
 
         this.busy = false;
         this.ready = true;

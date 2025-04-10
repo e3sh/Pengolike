@@ -175,23 +175,32 @@ class GameScene extends Phaser.Scene {
           this.basehp++;
           b.x = 0;
           b.y = 0;
+          b.setVisible(false);
           this.seffect[4].play();
           return;    
         } 
 
+        if ("invincible" in p) return;
         if ("pausestate" in p){
-          if (!p.pausestate) this.basehp--;
+          if (p.pausestate) return;
         }
         if (!Boolean(p.pausestate)){
           p.anims.play("kout_p");
           this.seffect[6].play();
+          this.basehp--;
         }
         p.pausestate = true;
-        this.timerOneShot = this.time.delayedCall(500, ()=>{
-          p.pausestate = false;
+        this.timerOneShot = this.time.delayedCall(300, ()=>{
+            p.pausestate = false;
+            p.invincible = true;
           }, this
         );
 
+        this.timerOneShot = this.time.delayedCall(500, ()=>{
+            delete p.invincible; 
+          }, this
+        );
+        
       }
 
       this.physics.add.collider(this.friends, this.mobs, hitenemy,null, this);
