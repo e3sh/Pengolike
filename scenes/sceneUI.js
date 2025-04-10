@@ -3,32 +3,24 @@ class uiScene extends Phaser.Scene {
     super({key:"UI", active: false});
   }
     /*
-    score;
-    maxscore;
-    stage;
-
-    scoreText;
     goverText;
     retryText;
-    debugText;
   
     cursors;
     zkey;
   */
+    gText;
+    bar;
+
     gameMain;
-    stage;
-    result;
-    basehp;
 
   preload() {
   }
 
   create() {
     /*
-    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#FFF' });
     this.goverText = this.add.text(240, 240, 'Game Over', { fontSize: '64px', fill: '#FFF' });
     this.retryText = this.add.text(200, 310, 'Retry Space key', { fontSize: '48px', fill: '#FFF' });
-    this.debugText = this.add.text(0,0, "test",  { fontSize: '16px', fill: '#FFF' });
 
     this.cursors = this.input.keyboard.createCursorKeys();
     const keyobj =  this.input.keyboard.addKey("Z");
@@ -40,28 +32,16 @@ class uiScene extends Phaser.Scene {
     this.retryText.setVisible(false);
     */
       //UI
-      this.gText = this.add.bitmapText(0, 600-16, 'font', 'PHASER 3');
+
+      this.gText = this.add.bitmapText(0, 600-48, 'font', 'PHASER 3');
       this.gText.setScale(2);
+      this.bar = this.add.bitmapText(8*16, 600-48, 'pcgfont', 'PHASER 3');
+      this.bar.setScale(1);
 
       this.gameMain = this.scene.get("GameMain");
 
-      this.stage = this.gameMain.stage;
-      this.result = this.gameMain.result;
-
       this.cameras.zoom = 2.0;
     /*
-    this.score = 0;
-    this.maxscore = 0;
-
-    this.stage = 1;
-
-    const rewrite_scoreboard = (score, maxscore)=>{
-      if (score != maxscore)
-        this.scoreText.setText('Score: ' + score + "/" + maxscore)
-      else 
-        this.scoreText.setText('Score: ' + score); 
-    }
-    
     // event section.
     const gameMain = this.scene.get("GameMain");
     // addScore
@@ -108,19 +88,29 @@ class uiScene extends Phaser.Scene {
     });
     */
   
-  
-  
-  
   }
 
   update() {
-    this.stage = this.gameMain.stage;
-    this.result = this.gameMain.result;
-    this.basehp = this.gameMain.basehp;
+    const stage = this.gameMain.stage;
+    const result = this.gameMain.result;
+    const basehp = this.gameMain.basehp;
+    const wave = this.gameMain.wave;
+    const mapchange = this.gameMain.mapchange;
 
     this.gText.setText(
-      "STAGE:" + this.stage + " BASEHP:" + this.basehp + " " 
-      +this.result
+      " " + result + "\n" +
+      "BASE HP:\n" + 
+      "WAVE:" + wave 
+      //+ " STAGE:" + stage 
+      //+ " BASEHP:" + basehp 
+      //+ " " +result 
+      //+ " MAPCHANGE:" + mapchange
+    );
+
+    this.bar.setText(
+      "" + "&".repeat(basehp/30) + "\n"        
+      + "#".repeat(basehp%30) + "\n"
+      + "o".repeat((wave*3)-this.gameMain.killcount)
     );
     /*
     this.debugText.setText("STAGE:" + this.stage + " FPS:"+Math.trunc(1000/game.loop.delta)+" FRAME:"+game.getFrame()+" DELTA:"+game.loop.delta

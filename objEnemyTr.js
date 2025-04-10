@@ -60,9 +60,9 @@ function gObjectEnemyTr(scene, x, y){
         }
         //check func 5*5
       }
-      console.log("s FL"+fllist.length + " BL:"+cblist.length + "/" + bplist.length);
+      //console.log("s FL"+fllist.length + " BL:"+cblist.length + "/" + bplist.length);
       for (let i in cblist){
-        effectbreak(cblist[i].x*16+8, cblist[i].y*16+8);
+        //effectbreak(cblist[i].x*16+8, cblist[i].y*16+8);
       }
     }
     if (cblist.length > 0){
@@ -205,7 +205,7 @@ function gObjectEnemyTr(scene, x, y){
         //);
         for (let i in routeresult){
           let r = routeresult[i];
-          effectbreak(r.x*16+8, r.y*16+8);
+          //effectbreak(r.x*16+8, r.y*16+8);
           runmode = 1;
         }
       }else{

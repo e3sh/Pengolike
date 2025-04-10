@@ -5,6 +5,8 @@ class UIDebugScene extends Phaser.Scene {
 
     debugText;
 
+    gm;
+
     friends;
     mobs;
     blocks;
@@ -12,14 +14,22 @@ class UIDebugScene extends Phaser.Scene {
 
     ft;
 
+    homekey;
+
     preload() {
 
     }
   
     create() {
+  
+      this.homekey = false;
+      this.input.keyboard.on("keydown-HOME", ()=> {this.homekey = true; }); 
+      this.input.keyboard.on("keyup-HOME", ()=> { this.homekey = false;});
+
       this.debugText = this.add.text(0, 0, "test",  { fontSize: '10px', fill: '#FFF' });
 
       const gamemain = this.scene.get("GameMain");
+      this.gm = gamemain;
 
       this.friends = gamemain.friends;
       this.mobs = gamemain.mobs;
@@ -32,6 +42,8 @@ class UIDebugScene extends Phaser.Scene {
     }
   
     update() {
+
+      this.debugText.setVisible(this.homekey);
 
       const poslist = (group)=>{
         let st = "";
@@ -49,16 +61,27 @@ class UIDebugScene extends Phaser.Scene {
 
       };
       
+      const gamemain = this.gm;
+
       this.debugText.setText(//
-        "FPS:"+Math.trunc(1000/game.loop.delta) + "\n"
+        "-- SystemStatus --\n"
+        +"FPS:"+Math.trunc(1000/game.loop.delta) + "\n"
         +"TIME:"+game.getTime()+"\n"
         +"DELTA:"+String(game.loop.delta).substring(0,5)+"\n"
         //+" "+ ((this.maze.ready)?"WAIT":"BUSY") 
         +"FRAME:" + (game.getFrame()-this.ft) + "\n"
+        +"-- GameStatus --\n"
+        +"Wave:" + gamemain.wave + "\n"
+        +"MapChange:" + gamemain.mapchange + "\n"
+        +"KillCount " + gamemain.killcount + "\n"
+        +"BaseHP:" + gamemain.basehp + "\n"
+        +"GameOverFlag:" + gamemain.goverf + "\n"
+        +"-- SpriteStatus --\n"
         +"Pengo:" + this.friends.getLength() + "/" +this.friends.getTotalUsed() + "\n" + poslist(this.friends)
         +"Mob  :" + this.mobs.getLength() + "/" +this.mobs.getTotalUsed() + "\n" + poslist(this.mobs)
         +"Block:" + this.blocks.getLength() + "/" +this.blocks.getTotalUsed() + "\n" + poslist(this.blocks)
         +"Effct:" + this.effcts.getLength() + "/" +this.effcts.getTotalUsed() + "\n" + poslist(this.effcts)
+
       );
     }
 }

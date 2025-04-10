@@ -25,9 +25,16 @@ class GameScene extends Phaser.Scene {
     killcount;
     basehp;
 
+    wave;
+    mapchange;
+
+    goverf;
+
     preload() {
       this.load.image("bgtiles", "assets/Blocks.png");
       this.load.image('ascfont', 'assets/aschr.png');
+      this.load.image('pcgasc', 'assets/pcgasc.png');
+
 
       this.load.spritesheet('player', 'assets/Pengo.png', { frameWidth: 16, frameHeight: 16 });
 
@@ -42,23 +49,43 @@ class GameScene extends Phaser.Scene {
       this.load.audio("use", ["assets/10use.mp3"]);
       this.load.audio("get", ["assets/11hit.mp3"]);
       this.load.audio("damage", ["assets/12damage.mp3"]);
+      this.load.audio("miss", ["assets/05miss.mp3"]);
+      this.load.audio("powup", ["assets/14powup.mp3"]);
 
       this.load.start();
     }
   
     ////======================
     create() {
-      const config = {
-        image: 'ascfont',
-        width: 8,
-        height: 8,
-        offset: { x: 0, y: 128 },
-        chars: Phaser.GameObjects.RetroFont.TEXT_SET1,
-        charsPerRow: 16,
-        spacing: { x: 0, y: 0 }
-      };
-      this.cache.bitmapFont.add('font', Phaser.GameObjects.RetroFont.Parse(this, config));
-    
+      //RetroFont
+      this.cache.bitmapFont.add(
+        'font', Phaser.GameObjects.RetroFont.Parse(
+          this,{
+            image: 'ascfont',
+            width: 8,
+            height: 8,
+            offset: { x: 0, y: 0 },
+            chars: Phaser.GameObjects.RetroFont.TEXT_SET1,
+            charsPerRow: 16,
+            spacing: { x: 0, y: 0 }
+          }
+        )
+      );
+ 
+      this.cache.bitmapFont.add(
+        'pcgfont', Phaser.GameObjects.RetroFont.Parse(
+          this,{
+            image: 'pcgasc',
+            width: 16,
+            height: 16,
+            offset: { x: 0, y: 0 },
+            chars: Phaser.GameObjects.RetroFont.TEXT_SET1,
+            charsPerRow: 16,
+            spacing: { x: 0, y: 0 }
+          }
+        )
+      );
+ 
       //map create
       const MAP_W = 17;//17
       const MAP_H = 17;
@@ -121,7 +148,7 @@ class GameScene extends Phaser.Scene {
       const keyobj_z =  this.input.keyboard.addKey("Z");
       this.zkey = {push:false, lock:false};
       keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
-      keyobj_z.on("up", ()=> {this.zkey.push = false;});
+      keyobj_z.on("up", ()=> { this.zkey.push = false;});
 
      // audio events
       this.seffect = [];
@@ -134,6 +161,8 @@ class GameScene extends Phaser.Scene {
       this.seffect[5] = this.sound.add("get");
       this.seffect[6] = this.sound.add("bow");
       this.seffect[7] = this.sound.add("damage");
+      this.seffect[8] = this.sound.add("miss");
+      this.seffect[9] = this.sound.add("powup");
 
       //game running status
       this.rf = false;
@@ -150,6 +179,13 @@ class GameScene extends Phaser.Scene {
       this.stage = 0;
       this.result = "...";
 
+      this.wave = 1;
+      this.mapchange = 0;
+
+      this.basehp = 0;
+
+      this.goverf = false;
+
       //Game Moving Object setup
       this.wp = [];
 
@@ -162,7 +198,7 @@ class GameScene extends Phaser.Scene {
       //w.gameobject.setVisible(false);
       //this.wp.push(w);
 
-      for (let i=0; i<4; i++){
+      for (let i=0; i<1; i++){
         const w = new gObjectEnemyTr(this, 0, 0);
         w.gameobject.deadstate = true;
         w.gameobject.setVisible(false);
@@ -237,6 +273,11 @@ class GameScene extends Phaser.Scene {
           this.layer.putTileAt(this.maze.BG.BFLAG, bf[0].x, bf[0].y);
         }
       });
+
+      this.killcount = 0;
+      this.basehp = 10;
+
+      this.goverf = false;
     }
 
     ////======================
@@ -252,9 +293,12 @@ class GameScene extends Phaser.Scene {
       if (this.maze.ready){
         if (!this.rf) {
           //this.seffect[3].play();
-          this.stage++;
-          this.killcount = 0;
-          this.basehp = 100;
+          //this.stage++;
+          this.mapchange++;
+          //this.killcount = 0;
+          //this.basehp += 10;
+
+          this.goverf = false;
 
           this.maze.draw(true);
           this.rf = true;
@@ -268,12 +312,14 @@ class GameScene extends Phaser.Scene {
             let w = bplist.splice(num,1);
             //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
           }
-          for (let i=0; i<3; i++){
+          for (let i=0; i<this.mapchange; i++){
             let num = Phaser.Math.Between(0, bplist.length-1);
-            let bp = bplist[num];  
-            this.layer.putTileAt(this.maze.BG.WALL,bp.x,bp.y);
-            let w = bplist.splice(num,1);
-            //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
+            if (num >= 0){    
+              let bp = bplist[num];  
+              this.layer.putTileAt(this.maze.BG.WALL,bp.x,bp.y);
+              let w = bplist.splice(num,1);
+              //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
+            }
           }
           this.layer.putTileAt(this.maze.BG.FLAG, 9, 13);
 
@@ -288,7 +334,8 @@ class GameScene extends Phaser.Scene {
 
         this.player.x = this.maze.MW/2*16+16;
         this.player.y = this.maze.MH/2*16+16;
-
+        delete this.player.invincible;
+        
         for (let i in this.wp){
           this.wp[i].active = false;
           if (i != 0){
@@ -297,13 +344,28 @@ class GameScene extends Phaser.Scene {
             this.wp[i].gameobject.x = 0;
             this.wp[i].gameobject.y = 0;
           }
-
         }
       }
       
       if (this.rf){
 
-        this.result = (this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
+        this.result = "";//(this.killcount)?"KILL:"+this.killcount:"";//" lx:" + count_x + " ly:" +count_y;
+
+        if (this.wave*3 <= this.killcount){
+          this.wave++;  
+          this.basehp +=5; //wave clear bonus
+          this.killcount = 0;
+          this.result = "NEXTWAVE";
+          this.seffect[9].play();
+          this.events.emit("wavec");
+          //if (this.wave > 3){
+            const w = new gObjectEnemyTr(this, 0, 0);
+            w.gameobject.deadstate = true;
+            w.gameobject.setVisible(false);
+            w.active = true;
+            this.wp.push(w);
+          //}
+        }
 
         const BG = this.maze.BG;
   
@@ -348,6 +410,9 @@ class GameScene extends Phaser.Scene {
             this.player.anims.play('popup_p',true);
             this.seffect[3].play();
             this.result ="CLEAR";
+
+            this.basehp += 10;//bonus
+
             this.maze.init();
             this.rf = false;
             this.events.emit("clear");
@@ -355,18 +420,47 @@ class GameScene extends Phaser.Scene {
         }
 
         if (this.zkey.push){
-          this.player.anims.play('popup_p',true);
-          this.seffect[2].play();
-          this.result ="RESET";
-          this.maze.init();
-          this.rf = false;
-          this.stage--;
-          this.events.emit("clear");
-          //console.log("z  --");
+          if (this.basehp > 30) {
+            this.basehp -=30;
+            this.player.anims.play('popup_p',true);
+            this.seffect[2].play();
+            this.result ="RESET";
+            this.maze.init();
+            this.rf = false;
+            //this.stage--;
+            this.events.emit("clear");
+            //console.log("z  --");
+          }else{
+            this.zkey.lock = false;
+          }
+        }
+
+        if (this.basehp <= 0){
+          this.basehp = 0;
+          this.result ="GAMEOVER";
+
+          if (!this.goverf){
+            this.wp[0].active = false;
+            this.player.anims.play("kout_p");
+            this.seffect[8].play();
+            this.player.invincible = true;
+
+            this.timerOneShot = this.time.delayedCall(5000, ()=>{
+            for (let i in this.wp){
+                this.wp[i].active = false;
+                this.events.emit("gameover");
+              }
+            }, this
+          );
+          this.goverf = true;
+          } else {
+            this.player.invincible = true;
+          }
+          //this.events.emit("clear");
         }
 
         if (this.rf){
-          this.result += " B:" + bb.length + ",F:" + bf.length;
+          //this.result += " F:" + bf.length;
         }
 
       }
