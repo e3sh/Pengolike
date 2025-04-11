@@ -117,7 +117,7 @@ class uiScene extends Phaser.Scene {
     this.bar.setText(
       "" + "&".repeat(basehp/30) + "\n"        
       + "#".repeat(basehp%30) + "\n"
-      + "o".repeat((wave*3)-this.gameMain.killcount)
+      + "o".repeat((wave*3)-this.gameMain.killcount) + ".".repeat(this.gameMain.killcount)
     );
     /*
     this.debugText.setText("STAGE:" + this.stage + " FPS:"+Math.trunc(1000/game.loop.delta)+" FRAME:"+game.getFrame()+" DELTA:"+game.loop.delta

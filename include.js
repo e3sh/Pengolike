@@ -8,6 +8,7 @@ const w = [
     "phaser/phaser.min.js",
 
     //Scene
+    "scenes/sceneLoad.js",
     "scenes/sceneTitle.js",
     "scenes/sceneGame.js",
     "scenes/sceneUI.js",

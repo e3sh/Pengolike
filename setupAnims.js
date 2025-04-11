@@ -1,6 +1,6 @@
 function setupAnims(scene){
 
-    if (scene.events.listenerCount("AnimSupComp")>0) return;
+    //if (scene.events.listenerCount("AnimSupComp")>0) return;
     
     //PLAYER
     scene.anims.create({ key: 'left_p',
@@ -120,6 +120,6 @@ function setupAnims(scene){
         frameRate: 8, repeat: -1
     });
 
-    scene.events.on("AnimSupComp",()=>{},this);
+    //scene.events.on("AnimSupComp",()=>{},this);
 
 }

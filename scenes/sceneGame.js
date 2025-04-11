@@ -6,7 +6,7 @@ class GameScene extends Phaser.Scene {
     maze;
     rf;
 
-    player;
+    player;   
     friends;
     blocks;
     mobs;
@@ -36,65 +36,9 @@ class GameScene extends Phaser.Scene {
 
     GAMECONFIG;
 
-    preload() {
-      this.load.image("bgtiles", "assets/Blocks.png");
-      this.load.image('ascfont', 'assets/aschr.png');
-      this.load.image('pcgasc', 'assets/pcgasc.png');
-
-
-      this.load.spritesheet('player', 'assets/Pengo.png', { frameWidth: 16, frameHeight: 16 });
-
-      this.load.spritesheet('blocks', 'assets/Blocks.png', { frameWidth: 16, frameHeight: 16 });
-      this.load.spritesheet('enemy', 'assets/Enemy.png', { frameWidth: 16, frameHeight: 16 });
-
-      this.load.audio("push", ["assets/push.mp3"]);
-      this.load.audio("pop", ["assets/pop.mp3"]);
-      this.load.audio("break", ["assets/break.mp3"]);
-      this.load.audio("clear", ["assets/clear.mp3"]);
-      this.load.audio("bow", ["assets/08bow.mp3"]);
-      this.load.audio("use", ["assets/10use.mp3"]);
-      this.load.audio("get", ["assets/11hit.mp3"]);
-      this.load.audio("damage", ["assets/12damage.mp3"]);
-      this.load.audio("miss", ["assets/05miss.mp3"]);
-      this.load.audio("powup", ["assets/14powup.mp3"]);
-
-      this.load.audio("bgm", ["assets/439_BPM120.mp3"]);
-
-
-      this.load.start();
-    }
-  
-    ////======================
+    preload() {}
+ 
     create() {
-      //RetroFont
-      this.cache.bitmapFont.add(
-        'font', Phaser.GameObjects.RetroFont.Parse(
-          this,{
-            image: 'ascfont',
-            width: 8,
-            height: 8,
-            offset: { x: 0, y: 0 },
-            chars: Phaser.GameObjects.RetroFont.TEXT_SET1,
-            charsPerRow: 16,
-            spacing: { x: 0, y: 0 }
-          }
-        )
-      );
- 
-      this.cache.bitmapFont.add(
-        'pcgfont', Phaser.GameObjects.RetroFont.Parse(
-          this,{
-            image: 'pcgasc',
-            width: 16,
-            height: 16,
-            offset: { x: 0, y: 0 },
-            chars: Phaser.GameObjects.RetroFont.TEXT_SET1,
-            charsPerRow: 16,
-            spacing: { x: 0, y: 0 }
-          }
-        )
-      );
- 
       //map create
       const MAP_W = 17;//17
       const MAP_H = 17;
@@ -117,14 +61,6 @@ class GameScene extends Phaser.Scene {
       this.maze = new mazemake(this.layer, MAP_W, MAP_H);
       this.maze.init();
 
-      //UI
-      //this.gText = this.add.bitmapText(0, 16*MAP_H, 'font', 'PHASER 3');
-      //this.gText.setScale(1);
-
-      //sprite anime setup
-      
-      setupAnims( this );
-      //
       //game object physics.sprite.body setup
       this.friends = this.physics.add.group();
       this.mobs = this.physics.add.group();
@@ -197,11 +133,6 @@ class GameScene extends Phaser.Scene {
       this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
       this.player.setSize(15,15);
-
-      //const w = new gObjectEnemyTr(this, 0, 0);
-      //w.gameobject.deadstate = true;
-      //w.gameobject.setVisible(false);
-      //this.wp.push(w);
 
       for (let i=0; i<1; i++){
         const w = new gObjectEnemyTr(this, 0, 0);
@@ -310,7 +241,7 @@ class GameScene extends Phaser.Scene {
           this.events.removeListener("shutdown");
         });
       }
-      this.events.on("gsColdStartComp",()=>{},this);
+      //this.events.on("gsColdStartComp",()=>{},this);
       //
       this.GAMECONFIG = {
         INITALHP:3, //GameStartHP

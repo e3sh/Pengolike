@@ -16,13 +16,10 @@ class UIDebugScene extends Phaser.Scene {
 
     homekey;
 
-    preload() {
-
-    }
+    preload() {}
   
     create() {
-  
-      this.homekey = false;
+        this.homekey = false;
       this.input.keyboard.on("keydown-HOME", ()=> {this.homekey = true; }); 
       this.input.keyboard.on("keyup-HOME", ()=> { this.homekey = false;});
 

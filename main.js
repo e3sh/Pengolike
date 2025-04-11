@@ -11,6 +11,7 @@ const config = {
         }
     },
     scene: [
+        loadScene,
         TitleScene,
         GameScene,
         uiScene,
