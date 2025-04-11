@@ -87,14 +87,14 @@ function gObjectEnemyTr(scene, x, y){
 
     gamemain = scene.scene.get("GameMain");
 
-    gamemain.events.on("layerChange",()=>{
+    //gamemain.events.on("layerChange",()=>{
       //growcount  = -60;
       //routeresult = []; //routeReSearch
       //sprite.setVelocityX(0);
       //sprite.setVelocityY(0);
       
       //sprite.anims.play('down_e',true);  
-    });
+    //});
     nextr = {x: Math.trunc((sprite.x+8)/16), y:Math.trunc((sprite.y+8)/16), vx:0, vy:0 };
     routeresult = [];
     //routeresult.push(nextr);
@@ -119,6 +119,7 @@ function gObjectEnemyTr(scene, x, y){
         if (Boolean(tween))tween.stop();
         scene.timerOneShot = scene.time.delayedCall(3000, ()=>{
           delete sprite.deadstate;
+          delete sprite.BONUSreceived; 
           sprite.setVisible(false);
           this.reborn();
           }, this
@@ -242,6 +243,7 @@ function gObjectEnemyTr(scene, x, y){
               yoyo: false
             });
             tween.play();
+            sprite.tween = tween; 
           //}
           //effectbreak(nextr.x*16+8, nextr.y*16+8);
           runmode = 1;

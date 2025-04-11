@@ -26,7 +26,7 @@ class UIDebugScene extends Phaser.Scene {
       this.input.keyboard.on("keydown-HOME", ()=> {this.homekey = true; }); 
       this.input.keyboard.on("keyup-HOME", ()=> { this.homekey = false;});
 
-      this.debugText = this.add.text(0, 0, "test",  { fontSize: '10px', fill: '#FFF' });
+      this.debugText = this.add.text(0, 0, "test",  { fontSize: '12 px', fill: '#FFF' });
 
       const gamemain = this.scene.get("GameMain");
       this.gm = gamemain;
@@ -36,7 +36,7 @@ class UIDebugScene extends Phaser.Scene {
       this.blocks = gamemain.blocks;
       this.effcts = gamemain.effcts;
 
-      gamemain.events.on("clear",()=>{this.ft = game.getFrame();});
+      //gamemain.events.on("clear",()=>{this.ft = game.getFrame();});
 
       this.ft = 0;
     }
@@ -48,10 +48,14 @@ class UIDebugScene extends Phaser.Scene {
       const poslist = (group)=>{
         let st = "";
         group.children.iterate(function (child) {
-          let f = ("deadstate" in child)?"*":" ";
+          let fd = ("deadstate" in child)?"*":" ";
+          let fg = ("BONUSreceived" in child)?"$":" ";
+          let fi = ("invincible" in child)?"i":" ";
+          let fp = ("pausestate" in child)?"p":" ";
 
           st = st 
-          + f 
+
+          + fd + fg + fi + fp
           + Math.trunc(child.x) 
           + "," + Math.trunc(child.y) 
           + " vx:" + Math.sign(child.body.velocity.x) 
@@ -62,6 +66,11 @@ class UIDebugScene extends Phaser.Scene {
       };
       
       const gamemain = this.gm;
+
+      let enames = "";
+      for (let s of gamemain.events.eventNames()){
+        enames += s + ":" +gamemain.events.listenerCount(s) + "\n";
+      }
 
       this.debugText.setText(//
         "-- SystemStatus --\n"
@@ -81,7 +90,9 @@ class UIDebugScene extends Phaser.Scene {
         +"Mob  :" + this.mobs.getLength() + "/" +this.mobs.getTotalUsed() + "\n" + poslist(this.mobs)
         +"Block:" + this.blocks.getLength() + "/" +this.blocks.getTotalUsed() + "\n" + poslist(this.blocks)
         +"Effct:" + this.effcts.getLength() + "/" +this.effcts.getTotalUsed() + "\n" + poslist(this.effcts)
-
+        +"-- eventsStatus --\n"
+        //+"wp:" + (("wp" in gamemain)?gamemain.wp.length:"none")
+        +enames
       );
     }
 }
