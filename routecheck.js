@@ -118,6 +118,9 @@ function routecheck(maze, mode=0){
 
     function routeCheck( x, y, n ){
 
+        if (!(y in workmap)) return false;
+        if (!(x in workmap[y])) return false;
+
         if (workmap[y][x] !=0 ) return false;
 
         workmap[y][x] = n;
