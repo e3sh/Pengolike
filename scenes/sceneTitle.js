@@ -9,8 +9,46 @@ class TitleScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    this.add.text(400-100, 200, 'PeDeF', { fontSize: '80px', fill: '#FFF' });
-    this.add.text(140, 350, 'push Space to Start', { fontSize: '48px', fill: '#FFF' });
+    this.add.text(20, 20, '5ch donichi thled theme defend/guard/protect 2025/4/7-17', { fontSize: '12px', fill: '#FFF' });
+    this.add.text(400-100, 130, 'PeDeF', { fontSize: '80px', fill: '#FFF' });
+    this.add.text(400-120, 200, 'Pengin (base) DeFence', { fontSize: '24px', fill: '#FFF' });
+
+    this.add.text(
+      400, 288
+      , 'player\n\nbase\n\nenemy\n\nblocks'
+      , { fontSize: '16px', fill: '#FFF' }
+    );
+    this.add.text(400-160, 450, 'push Space to Start', { fontSize: '32px', fill: '#FFF' });
+
+    const spg = this.physics.add.group();
+    
+    const pl = spg.get(360,288,"player");
+    pl.anims.play('down_p',true);
+    pl.setScale(2,2);  
+
+    const en = spg.get(360,288+64,"enemy");
+    en.anims.play('down_e',true);
+    en.setScale(2,2);  
+
+    const b1 = spg.get(360-16,288+96,"blocks");
+    b1.anims.play('bbox',true);
+    b1.setScale(2,2);  
+
+    const b2 = spg.get(360+16,288+96,"blocks");
+    b2.anims.play('hboxt',true);
+    b2.setScale(2,2);  
+
+    const fl = spg.get(360,288+32,"blocks");
+    fl.anims.play('flag',true);
+    fl.setScale(2,2);  
+
+
+
+
+
+
+
+
 
     this.cursors = this.input.keyboard.createCursorKeys();
   }

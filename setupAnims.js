@@ -115,6 +115,10 @@ function setupAnims(scene){
         frames: scene.anims.generateFrameNumbers('blocks', { start: 10, end: 19 }),
         frameRate: 8, repeat: -1
     });
+    scene.anims.create({ key: 'hboxt',
+        frames: scene.anims.generateFrameNumbers('blocks', { start: 10, end: 10 }),
+        frameRate: 8, repeat: -1
+    });
     scene.anims.create({ key: 'flag',
         frames: scene.anims.generateFrameNumbers('blocks', { start: 49, end: 49 }),
         frameRate: 8, repeat: -1

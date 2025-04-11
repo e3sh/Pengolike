@@ -151,7 +151,7 @@ class GameScene extends Phaser.Scene {
           b.setVisible(false);
           this.seffect[4].play();
           b.BONUSreceived = true;
-          console.log("!");
+          //console.log("!");
           return;    
         } 
 
