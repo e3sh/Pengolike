@@ -12,6 +12,7 @@ const config = {
     },
     scene: [
         loadScene,
+        inputScene,
         TitleScene,
         GameScene,
         uiScene,

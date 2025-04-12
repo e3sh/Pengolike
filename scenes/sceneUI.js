@@ -1,6 +1,7 @@
 class uiScene extends Phaser.Scene {
   constructor() {
     super({key:"UI", active: false});
+    //console.log("ui constructor");
   }
     /*
     goverText;
@@ -15,9 +16,11 @@ class uiScene extends Phaser.Scene {
     gameMain;
 
   preload() {
+    //console.log("ui preload");
   }
 
   create() {
+    //console.log("ui create");
     
     this.goverText = this.add.text(240, 240, 'Game Over', { fontSize: '64px', fill: '#FFF' });
     this.retryText = this.add.text(200, 310, 'Push Space key', { fontSize: '48px', fill: '#FFF' });

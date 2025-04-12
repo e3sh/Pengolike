@@ -9,6 +9,7 @@ const w = [
 
     //Scene
     "scenes/sceneLoad.js",
+    "scenes/sceneInput.js",
     "scenes/sceneTitle.js",
     "scenes/sceneGame.js",
     "scenes/sceneUI.js",

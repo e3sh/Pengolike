@@ -9,7 +9,9 @@
 //map.draw(map.wall, "dsp_d");//DOM <p> Draw wall(array);
 //map.draw(map.floo, "dsp_e");
 
-function mazemake(layer, w , h){
+function mazemake(layer, w , h,
+    bg = {BLOCK:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h}
+ ){
 
     let map_wall;
     let map_floor;
@@ -37,11 +39,11 @@ function mazemake(layer, w , h){
     const MAP_W = w;
     const MAP_H = h;
 
-    const BGBLOCK = 0;
-    const BGFLOOR = 44//35; 
-    const BGWALL  = 7;
+    this.BG = bg;//{BLOCK:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h};
 
-    this.BG = {BLOCK:BGBLOCK, BONUS:10, FLOOR:BGFLOOR, WALL:BGWALL, FLAG:49, BFLAG:50, MAP_W:MAP_W, MAP_H:MAP_H };
+    const BGBLOCK = bg.BLOCK;
+    const BGFLOOR = bg.FLOOR; 
+    const BGWALL = bg.WALL;
 
     const vx = [ 0, 1, 0, -1 ]; const vy = [ -1, 0, 1, 0];
 

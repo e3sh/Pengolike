@@ -1,6 +1,26 @@
 class GameScene extends Phaser.Scene {
     constructor() {
       super({key:"GameMain", active:false});
+
+      this.GAMECONFIG = {
+        INITALHP:3, //GameStartHP
+        WAVEBONUS:0,//WaveChangeBonus
+        XTALBONUS:5,//BoxLineBounus
+        RESETCOST:30, //
+
+        BG: {BLOCK:0, 
+          BONUS:10, 
+          FLOOR:44, 
+          WALL:7, 
+          FLAG:49, 
+          BFLAG:50, 
+          MAP_W:17, 
+          MAP_H:17 
+        },
+
+        PLAYER:{SPEED:80}, //SLOW < FAST //move vector Default:60
+        ENEMY:{ WAIT:20}   //FAST < SLOW //wait step   Default:30
+      }
     }
 
     maze;
@@ -34,16 +54,13 @@ class GameScene extends Phaser.Scene {
 
     xtalblockerr;
 
-    GAMECONFIG;
+    preload() {
 
-    preload() {}
- 
-    create() {
       //map create
-      const MAP_W = 17;//17
-      const MAP_H = 17;
+      const MAP_W = this.GAMECONFIG.BG.MAP_W;
+      const MAP_H = this.GAMECONFIG.BG.MAP_H;
 
-      const BGBLOCK = 0;
+      const BGBLOCK = this.GAMECONFIG.BG.BLOCK;
 
       let level = [[]];
       //init 
@@ -58,14 +75,14 @@ class GameScene extends Phaser.Scene {
       const tiles = map.addTilesetImage("bgtiles");
       this.layer = map.createLayer(0, tiles, 0, 0);
 
-      this.maze = new mazemake(this.layer, MAP_W, MAP_H);
+      this.maze = new mazemake(this.layer, MAP_W, MAP_H, this.GAMECONFIG.BG);
+
       this.maze.init();
 
       //game object physics.sprite.body setup
       this.friends = this.physics.add.group();
       this.mobs = this.physics.add.group();
       this.blocks = this.physics.add.group();
-      //this.blocks.create(100,100,"blocks");
       
       this.blocks.children.iterate(function(child){
         child.setScale(1);
@@ -74,74 +91,47 @@ class GameScene extends Phaser.Scene {
 
       this.effcts = this.physics.add.group();
 
-      const coldstart = true;//(this.events.listenerCount("gsColdStartComp")>0)?false:true;
-      if (coldstart) {
-        //BG collison
-        this.layer.setCollisionBetween(0, 34, true, false, this.layer); 
-        this.layer.setCollisionBetween(49,50, true, false, this.layer); 
-        
-        const blockstop = (p, b)=>{
-          this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
-          this.seffect[1].play();
-          p.destroy();
-          this.events.emit("layerChange");
-        }
-        
-        this.physics.add.collider(this.blocks, this.layer, blockstop, null, this);
+      //BG collison
+      this.layer.setCollisionBetween(0, 34, true, false, this.layer); 
+      this.layer.setCollisionBetween(49,50, true, false, this.layer); 
+      
+      const blockstop = (p, b)=>{
+        this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
+        this.seffect[1].play();
+        p.destroy();
+        this.events.emit("layerChange");
+      }
+      
+      this.physics.add.collider(this.blocks, this.layer, blockstop, null, this);
 
       //  Input Events
-        this.cursors = this.input.keyboard.createCursorKeys();
+      this.cursors = this.input.keyboard.createCursorKeys();
 
-        const keyobj_z =  this.input.keyboard.addKey("Z");
-        this.zkey = {push:false, lock:false};
-        keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
-        keyobj_z.on("up", ()=> { this.zkey.push = false;});
+      const keyobj_z =  this.input.keyboard.addKey("Z");
+      this.zkey = {push:false, lock:false};
+      keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
+      keyobj_z.on("up", ()=> { this.zkey.push = false;});
 
       // audio events
-        this.seffect = [];
+      this.seffect = [];
 
-        this.seffect[0] = this.sound.add("push");
-        this.seffect[1] = this.sound.add("pop");
-        this.seffect[2] = this.sound.add("break");
-        this.seffect[3] = this.sound.add("clear");
-        this.seffect[4] = this.sound.add("use");
-        this.seffect[5] = this.sound.add("get");
-        this.seffect[6] = this.sound.add("bow");
-        this.seffect[7] = this.sound.add("damage");
-        this.seffect[8] = this.sound.add("miss");
-        this.seffect[9] = this.sound.add("powup");
+      this.seffect[0] = this.sound.add("push");
+      this.seffect[1] = this.sound.add("pop");
+      this.seffect[2] = this.sound.add("break");
+      this.seffect[3] = this.sound.add("clear");
+      this.seffect[4] = this.sound.add("use");
+      this.seffect[5] = this.sound.add("get");
+      this.seffect[6] = this.sound.add("bow");
+      this.seffect[7] = this.sound.add("damage");
+      this.seffect[8] = this.sound.add("miss");
+      this.seffect[9] = this.sound.add("powup");
 
-        this.music = this.sound.add("bgm");
-      
+      this.music = this.sound.add("bgm");
+    
         //camera setup
-        this.cameras.main.zoom = 2.0;
-        this.cameras.main.centerOn(132, 150);
-      }
-      //game running status
-      this.rf = false;
-      this.ft = 0;
-
-      this.stage = 0;
-      this.result = "...";
-
-      this.wave = 1;
-      this.mapchange = 0;
-
-      //Game Moving Object setup
-      this.wp = [];
-
-      this.wp.push(new gObjectPlayer(this, 0,0));
-      this.player = this.wp[0].gameobject;
-      this.player.setSize(15,15);
-
-      for (let i=0; i<1; i++){
-        const w = new gObjectEnemyTr(this, 0, 0);
-        w.gameobject.deadstate = true;
-        w.BONUSreceived = true;
-        w.gameobject.setVisible(false);
-        this.wp.push(w);
-      }
-
+      this.cameras.main.zoom = 2.0;
+      this.cameras.main.centerOn(132, 150);
+      
       //collision setting
       const hitenemy = (p, b)=>{
         if ("deadstate" in b){
@@ -177,15 +167,14 @@ class GameScene extends Phaser.Scene {
         );
       }
 
-      if (coldstart){
-        this.physics.add.collider(this.friends, this.mobs, hitenemy,null, this);
-        //this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
-        this.physics.add.collider(this.friends, this.layer);
-        this.physics.add.collider(this.friends, this.blocks);;
+      this.physics.add.collider(this.friends, this.mobs, hitenemy,null, this);
+      //this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
+      this.physics.add.collider(this.friends, this.layer);
+      this.physics.add.collider(this.friends, this.blocks);;
 
-        this.physics.add.collider(this.mobs, this.mobs);
-        this.physics.add.collider(this.mobs, this.layer);
-      }
+      this.physics.add.collider(this.mobs, this.mobs);
+      this.physics.add.collider(this.mobs, this.layer);
+
       const hitblock = (p, b)=>{
         if (!('deadstate' in p)){
           p.setTint("0xff7f7f");
@@ -215,40 +204,58 @@ class GameScene extends Phaser.Scene {
         }
       }
 
-      if (coldstart){
-        this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);
+      this.physics.add.overlap(this.mobs, this.blocks, hitblock, null, this);
 
-        //[SCROLL config]
-        //this.cameras.main.startFollow(this.player);
-        //
-        this.scene.launch("UI");
-        this.scene.launch("Debug");
-
-        this.events.on("baseattack",()=>{
-          this.basehp--;
-          this.seffect[7].play();
-          if (this.basehp<=0){
-            let bf = this.maze.blockposlist(this.maze.BG.FLAG);
-            if (bf.length >0){
-              this.layer.putTileAt(this.maze.BG.BFLAG, bf[0].x, bf[0].y);
-            }
-          }
-        });
-        this.events.on("shutdown", ()=>{
-          //this.events.removeAllListeners(); //NG
-
-          this.events.removeListener("baseattack");
-          this.events.removeListener("shutdown");
-        });
-      }
-      //this.events.on("gsColdStartComp",()=>{},this);
+      //[SCROLL config]
+      //this.cameras.main.startFollow(this.player);
       //
-      this.GAMECONFIG = {
-        INITALHP:3, //GameStartHP
-        WAVEBONUS:0,//WaveChangeBonus
-        XTALBONUS:5,//BoxLineBounus
-        RESETCOST:30, //
+      this.events.on("baseattack",()=>{
+        this.basehp--;
+        this.seffect[7].play();
+        if (this.basehp<=0){
+          let bf = this.maze.blockposlist(this.maze.BG.FLAG);
+          if (bf.length >0){
+            this.layer.putTileAt(this.maze.BG.BFLAG, bf[0].x, bf[0].y);
+          }
+        }
+      });
+
+      this.events.on("shutdown", ()=>{
+        //this.events.removeAllListeners(); //NG
+
+        this.events.removeListener("baseattack");
+        this.events.removeListener("shutdown");
+      });
+    }
+ 
+    create() {
+      //game running status
+      this.rf = false;
+      this.ft = 0;
+
+      this.stage = 0;
+      this.result = "...";
+
+      this.wave = 1;
+      this.mapchange = 0;
+
+      //Game Moving Object setup
+      this.wp = [];
+
+      this.wp.push(new gObjectPlayer(this, 0,0));
+      this.player = this.wp[0].gameobject;
+      this.player.setSize(15,15);
+
+      for (let i=0; i<1; i++){
+        const w = new gObjectEnemyTr(this, 0, 0);
+        w.gameobject.deadstate = true;
+        w.BONUSreceived = true;
+        w.gameobject.setVisible(false);
+        this.wp.push(w);
       }
+
+      this.scene.launch("UI");
+      this.scene.launch("Debug");
 
       this.killcount = 0;
       this.basehp = this.GAMECONFIG.INITALHP;
@@ -262,7 +269,7 @@ class GameScene extends Phaser.Scene {
 
     ////======================
     update() {
-
+      
       if (this.cursors.space.isDown){
         if (this.goverf && this.endwait){
           //Title Return;
@@ -421,7 +428,7 @@ class GameScene extends Phaser.Scene {
           }
         }
 
-        if (this.zkey.push){
+        if (this.zkey.push){//} && this.cursors.space.isDown){
           if (this.xtalblockerr) {
             this.basehp += this.GAMECONFIG.RESETCOST;
             this.events.emit("eracePG");

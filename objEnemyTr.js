@@ -25,6 +25,8 @@ function gObjectEnemyTr(scene, x, y){
   let gamemain;
   let tween;
 
+  const WAIT = scene.GAMECONFIG.ENEMY.WAIT;
+
   this.create = ()=>{
 
     sprite = mobs.get(x, y, "enemy");
@@ -150,11 +152,12 @@ function gObjectEnemyTr(scene, x, y){
     if (stepCount >15) 
     {
       routeresult = [];
-      growcount +=30;
+      //growcount += WAIT;
       //console.log(b1);
     }
     if (!scene.maze.ready) return;
-    if (growcount < 30){ growcount++; return; }else{
+    if (growcount < WAIT){ growcount++; return; }else{
+      //check
       if (routeresult.length < 1) {
         stepCount = 0;
         nextr = {x: Math.trunc((sprite.x+8)/16), y:Math.trunc((sprite.y+8)/16), vx:0, vy:0 };
@@ -209,7 +212,10 @@ function gObjectEnemyTr(scene, x, y){
           //effectbreak(r.x*16+8, r.y*16+8);
           runmode = 1;
         }
-      }else{
+
+      }
+      //move
+      if (routeresult.length > 0){
         nextr = routeresult.pop();
         //stepCount++;
         /*
@@ -237,7 +243,7 @@ function gObjectEnemyTr(scene, x, y){
               targets: sprite,
               x: nextr.x*16+8,
               y: nextr.y*16+8,
-              ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+              ease: 'Quad',       // 'Linear','Cubic', 'Elastic', 'Bounce', 'Back'
               duration: 500,
               repeat: 0,            // -1: infinity
               yoyo: false
@@ -250,6 +256,7 @@ function gObjectEnemyTr(scene, x, y){
         }
         if (gt2.index == BG.FLAG) runmode=2;
         //console.log(gt2.index + " " + gt.index+" "+runmode);
+        growcount = 0;
       }
 
       if (runmode != 0){
@@ -269,8 +276,10 @@ function gObjectEnemyTr(scene, x, y){
           down:{isDown: (Math.random()*10>6)?true:false},
           space:{isDown: (Math.random()*10>8)?true:false}
         }
+        growcount = 0;
+
       }
-      growcount = 0;
+      //growcount = 0;
     }
 
     if (inputc.left.isDown){
@@ -317,6 +326,7 @@ function gObjectEnemyTr(scene, x, y){
           if (gt.index == BG.FLAG) {
             gamemain = scene.scene.get("GameMain");
             gamemain.events.emit("baseattack");
+            growcount = -WAIT;
           }
         }
         //layer.putTileAtWorldXY(35, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);

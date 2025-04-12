@@ -15,6 +15,8 @@ function gObjectPlayer(scene, x, y){
   let BG = scene.maze.BG;
 
   let seffect;
+
+  const SPEED = scene.GAMECONFIG.PLAYER.SPEED;
   
   this.create = ()=>{
 
@@ -116,8 +118,8 @@ function gObjectPlayer(scene, x, y){
     }
 
     if (mvmode.type){
-      sprite.setVelocityX(mvmode.vx*60);
-      sprite.setVelocityY(mvmode.vy*60);
+      sprite.setVelocityX(mvmode.vx*SPEED);
+      sprite.setVelocityY(mvmode.vy*SPEED);
       if (Boolean(mvmode.anim)){
         sprite.anims.play((mvmode.push?'push_':'')+mvmode.anim, true);}
         
