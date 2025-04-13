@@ -245,7 +245,7 @@ class GameScene extends Phaser.Scene {
 
       this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
-      this.player.setSize(15,15);
+      //this.player.setSize(15,15);
 
       for (let i=0; i<1; i++){
         const w = new gObjectEnemyTr(this, 0, 0);

@@ -14,6 +14,7 @@ class inputScene extends Phaser.Scene {
 
   space;
   zkey;
+  xkey;
 
   duration;
   
@@ -26,7 +27,8 @@ class inputScene extends Phaser.Scene {
       down: "S",
       left: "A",
       right: "D",
-      zkey: "Z"
+      zkey: "Z",
+      xkey: "X"
     }); // keyObjects.up, keyObjects.down, keyObjects.left, keyObjects.right
 
     this.#cKeys = this.input.keyboard.createCursorKeys();
@@ -40,6 +42,7 @@ class inputScene extends Phaser.Scene {
     this.right= this.#cKeys.right.isDown || this.#keyObj.right.isDown;
     this.space = this.#cKeys.space.isDown;
     this.zkey = this.#keyObj.zkey.isDown;
+    this.xkey = this.#keyObj.xkey.isDown;
 
     this.duration = {
       up: Math.trunc(this.#cKeys.up.getDuration())
@@ -55,7 +58,8 @@ class inputScene extends Phaser.Scene {
       + Math.trunc(this.#keyObj.right.getDuration()),
 
       space: Math.trunc(this.#cKeys.space.getDuration()), //ms
-      z:  Math.trunc(this.#keyObj.zkey.getDuration()) //ms
+      z:  Math.trunc(this.#keyObj.zkey.getDuration()), //ms
+      x:  Math.trunc(this.#keyObj.xkey.getDuration()) //ms
     }
     //var isShiftDown = cursorKeys.shift.isDown;
   }
@@ -68,6 +72,7 @@ class inputScene extends Phaser.Scene {
     +"right:" + this.right + "/" + this.duration.right + "ms\n"
     +"space:" + this.space + "/" + this.duration.space + "ms\n"
     +"zkey :"+ this.zkey + "/" + this.duration.z + "ms\n"
+    +"xkey :"+ this.xkey + "/" + this.duration.x + "ms\n"
     //+"duration(ms):"+ this.duration + "\n"
 
     return st;

@@ -32,6 +32,7 @@ function gObjectEnemyTr(scene, x, y){
     sprite = mobs.get(x, y, "enemy");
     sprite.setCollideWorldBounds(true);
     sprite.setSize(14,14);
+    //sprite.setCircle(10);
 
     this.gameobject = sprite;
     sprite.anims.play('popup_e',true);   

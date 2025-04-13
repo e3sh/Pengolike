@@ -88,6 +88,9 @@ function routecheck(maze, mode=0){
 
     function routedataCreate( x, y ){
 
+        if (!(y in workmap)) return false;
+        if (!(x in workmap[y])) return false;
+
         routeCheck( x, y, 1);
 
         x = en.x;
