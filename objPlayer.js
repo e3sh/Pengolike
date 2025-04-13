@@ -197,11 +197,24 @@ function gObjectPlayer(scene, x, y){
     }
 
     if (mvmode.type){
+      let gt_ud = layer.getTileAtWorldXY(
+        sprite.x, 
+        sprite.y + mvmode.vy*10
+      );
+
+      let gt_lr = layer.getTileAtWorldXY(
+        sprite.x + mvmode.vx*10, 
+        sprite.y
+      );
+
       let gt = layer.getTileAtWorldXY(
         sprite.x + mvmode.vx*10, 
         sprite.y + mvmode.vy*10
       );
-      if (gt.index == BG.FLOOR){
+
+
+
+      if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR && gt.index == BG.FLOOR){
        //console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);
 
         if (moveready){
