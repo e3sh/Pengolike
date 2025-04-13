@@ -202,7 +202,7 @@ function gObjectPlayer(scene, x, y){
         sprite.y + mvmode.vy*10
       );
       if (gt.index == BG.FLOOR){
-        console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);
+       //console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);
 
         if (moveready){
  
