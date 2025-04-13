@@ -41,20 +41,34 @@ class inputScene extends Phaser.Scene {
     this.space = this.#cKeys.space.isDown;
     this.zkey = this.#keyObj.zkey.isDown;
 
-    this.duration = this.#keyObj.zkey.getDuration(); //ms
+    this.duration = {
+      up: Math.trunc(this.#cKeys.up.getDuration())
+      + Math.trunc(this.#keyObj.up.getDuration()),
 
+      down: Math.trunc(this.#cKeys.down.getDuration())
+      + Math.trunc(this.#keyObj.down.getDuration()),
+
+      left: Math.trunc(this.#cKeys.left.getDuration())
+      + Math.trunc(this.#keyObj.left.getDuration()),
+
+      right: Math.trunc(this.#cKeys.right.getDuration())
+      + Math.trunc(this.#keyObj.right.getDuration()),
+
+      space: Math.trunc(this.#cKeys.space.getDuration()), //ms
+      z:  Math.trunc(this.#keyObj.zkey.getDuration()) //ms
+    }
     //var isShiftDown = cursorKeys.shift.isDown;
   }
 
   info(){
     let st = "-- input Information --\n"
-    +"up   :" + this.up + "\n"
-    +"down :" + this.down  + "\n"
-    +"left :" + this.left + "\n"
-    +"right:" + this.right + "\n"
-    +"space:" + this.space + "\n"
-    +"zkey :"+ this.zkey + "\n"
-    +"duration(ms):"+ this.duration + "\n"
+    +"up   :" + this.up + "/" + this.duration.up + "ms\n"
+    +"down :" + this.down  + "/" + this.duration.down + "ms\n"
+    +"left :" + this.left + "/" + this.duration.left + "ms\n"
+    +"right:" + this.right + "/" + this.duration.right + "ms\n"
+    +"space:" + this.space + "/" + this.duration.space + "ms\n"
+    +"zkey :"+ this.zkey + "/" + this.duration.z + "ms\n"
+    //+"duration(ms):"+ this.duration + "\n"
 
     return st;
   }

@@ -33,8 +33,9 @@ class GameScene extends Phaser.Scene {
 
     layer;
 
-    cursors;
-    zkey;
+    //cursors;
+    //zkey;
+    inputc;
 
     seffect;
     music;
@@ -105,12 +106,12 @@ class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.blocks, this.layer, blockstop, null, this);
 
       //  Input Events
-      this.cursors = this.input.keyboard.createCursorKeys();
+      this.inputc = this.scene.get("Input");//this.input.keyboard.createCursorKeys();
 
-      const keyobj_z =  this.input.keyboard.addKey("Z");
-      this.zkey = {push:false, lock:false};
-      keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
-      keyobj_z.on("up", ()=> { this.zkey.push = false;});
+      //const keyobj_z =  this.input.keyboard.addKey("Z");
+      //this.zkey = {push:false, lock:false};
+      //keyobj_z.on("down", ()=> {if (!this.zkey.lock) {this.zkey.push = true; this.zkey.lock = true; }}); 
+      //keyobj_z.on("up", ()=> { this.zkey.push = false;});
 
       // audio events
       this.seffect = [];
@@ -170,7 +171,7 @@ class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.friends, this.mobs, hitenemy,null, this);
       //this.physics.add.overlap(this.friends, this.mobs, hitenemy,null, this);
       this.physics.add.collider(this.friends, this.layer);
-      this.physics.add.collider(this.friends, this.blocks);;
+      //this.physics.add.collider(this.friends, this.blocks);;
 
       this.physics.add.collider(this.mobs, this.mobs);
       this.physics.add.collider(this.mobs, this.layer);
@@ -270,7 +271,7 @@ class GameScene extends Phaser.Scene {
     ////======================
     update() {
       
-      if (this.cursors.space.isDown){
+      if (this.inputc.space){
         if (this.goverf && this.endwait){
           //Title Return;
           this.scene.stop("UI");
@@ -320,7 +321,7 @@ class GameScene extends Phaser.Scene {
           }
           this.layer.putTileAt(this.maze.BG.FLAG, 9, 13);
 
-          this.zkey.lock = false;
+          //this.zkey.lock = false;
 
           for (let i in this.wp){this.wp[i].active = true;}
 
@@ -428,24 +429,28 @@ class GameScene extends Phaser.Scene {
           }
         }
 
-        if (this.zkey.push){//} && this.cursors.space.isDown){
+        if (this.inputc.zkey){
           if (this.xtalblockerr) {
             this.basehp += this.GAMECONFIG.RESETCOST;
             this.events.emit("eracePG");
             this.xtalblockerr = false;
           }
           if (this.basehp > this.GAMECONFIG.RESETCOST) {
-            this.basehp -= this.GAMECONFIG.RESETCOST;
-            this.player.anims.play('popup_p',true);
-            this.seffect[2].play();
-            this.result ="RESET";
-            this.maze.init();
-            this.rf = false;
-            //this.stage--;
-            //this.events.emit("clear");
-            //console.log("z  --");
+            this.player.anims.play('ship_p',true);
+            if (this.inputc.duration.z > 750){
+              this.basehp -= this.GAMECONFIG.RESETCOST;
+              this.player.anims.play('popup_p',true);
+              this.seffect[2].play();
+              this.result ="RESET";
+              this.maze.init();
+              this.rf = false;
+              //this.stage--;
+              //this.events.emit("clear");
+              //console.log("z  --");
+            }
           }else{
-            this.zkey.lock = false;
+            //this.player.clearTint();
+            //this.zkey.lock = false;
           }
         }
 

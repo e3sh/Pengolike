@@ -43,6 +43,10 @@ function setupAnims(scene){
         frames: scene.anims.generateFrameNumbers('player', { start: 16, end: 17 }),
         frameRate: 4, repeat: -1
     });
+    scene.anims.create({ key: 'ship_p',
+        frames: scene.anims.generateFrameNumbers('player', { start: 20, end: 21 }),
+        frameRate: 6, repeat: -1
+    });
 
     //ENEMY
     scene.anims.create({ key: 'left_e',
