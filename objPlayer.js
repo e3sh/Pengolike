@@ -20,6 +20,8 @@ function gObjectPlayer(scene, x, y){
   let tween;
   let moveready;
 
+  let overfielderr
+
   let before_pos;
 
   const SPEED = scene.GAMECONFIG.PLAYER.SPEED;
@@ -212,7 +214,8 @@ function gObjectPlayer(scene, x, y){
         sprite.y + mvmode.vy*10
       );
 
-
+      if (!(Boolean(gt_ud)&& Boolean(gt_lr) && Boolean(gt))) return; //err
+      if (!(("index" in gt_ud)&&("index" in gt_lr)&&("index" in gt))) return; //err
 
       if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR && gt.index == BG.FLOOR){
        //console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);

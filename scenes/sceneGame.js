@@ -80,6 +80,8 @@ class GameScene extends Phaser.Scene {
 
       this.maze.init();
 
+      this.physics.world.setBounds(16, 16, (MAP_W-2)*16, (MAP_H-2)*16);
+
       //game object physics.sprite.body setup
       this.friends = this.physics.add.group();
       this.mobs = this.physics.add.group();
