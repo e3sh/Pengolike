@@ -102,6 +102,10 @@ function routecheck(maze, mode=0){
             let ri = -1;
             let wcnum = wnum;
             for (let i in vx){
+
+                if (!(y+vy[i] in workmap)) continue;
+                if (!(x+vx[i] in workmap[y+vy[i]])) continue;
+                
                 if (workmap[y+vy[i]][x+vx[i]] < wnum){
                     if (wcnum > workmap[y+vy[i]][x+vx[i]]){
                         ri = i;
@@ -116,6 +120,8 @@ function routecheck(maze, mode=0){
             y = y + vy[ri];
             route.push({vx:-vx[ri], vy:-vy[ri], x:x, y:y});
         }
+
+        return true;
         //console.log("rl" + route.length);
     }
 

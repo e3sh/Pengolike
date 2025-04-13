@@ -284,6 +284,14 @@ class GameScene extends Phaser.Scene {
 
       for (let i in this.wp){this.wp[i].update();}
      
+      let gt = this.layer.getTileAtWorldXY( this.player.x, this.player.y);
+      if (gt.index != this.maze.BG.FLOOR){ 
+        this.xtalblockerr = true;
+        this.events.emit("popupPG");
+      }else{
+        this.xtalblockerr = false;
+        this.events.emit("eracePG");
+      }
       //this.gText.setText(
       //  "STAGE:" + this.stage + " "
       //  +this.result
@@ -433,7 +441,7 @@ class GameScene extends Phaser.Scene {
 
         if (this.inputc.zkey){
           if (this.xtalblockerr) {
-            this.basehp += this.GAMECONFIG.RESETCOST;
+            if (this.basehp <= this.GAMECONFIG.RESETCOST) this.basehp += this.GAMECONFIG.RESETCOST;
             this.events.emit("eracePG");
             this.xtalblockerr = false;
           }
