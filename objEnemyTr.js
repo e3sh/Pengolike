@@ -159,6 +159,7 @@ function gObjectEnemyTr(scene, x, y){
     if (!scene.maze.ready) return;
     if (growcount < WAIT){ growcount++; return; }else{
       //check
+      let nextrouteget = false;
       if (routeresult.length < 1) {
         stepCount = 0;
         nextr = {x: Math.trunc((sprite.x+8)/16), y:Math.trunc((sprite.y+8)/16), vx:0, vy:0 };
@@ -174,6 +175,7 @@ function gObjectEnemyTr(scene, x, y){
             ,{x:bf[0].x ,y:bf[0].y}
           );
           let w = route[0].result();
+          
           if (w.length > 0){
             target = {x:bf[0].x ,y:bf[0].y}; 
           }
@@ -213,7 +215,7 @@ function gObjectEnemyTr(scene, x, y){
           //effectbreak(r.x*16+8, r.y*16+8);
           runmode = 1;
         }
-
+        nextrouteget = true;
       }
       //move
       if (routeresult.length > 0){
@@ -226,6 +228,7 @@ function gObjectEnemyTr(scene, x, y){
           + "," + Math.trunc(sprite.y/16) + "/" + nextr.y 
         );//w.x + " " + w.y);
         */
+
         let gt = layer.getTileAtWorldXY(nextr.x*16+8, nextr.y*16+8);
         let gt2 = layer.getTileAtWorldXY((nextr.x+nextr.vx)*16+8, (nextr.y+nextr.vy)*16+8);
         //console.log(gt2.index + " " + gt.index);
@@ -233,12 +236,7 @@ function gObjectEnemyTr(scene, x, y){
           runmode = 1;
           routeresult = [];
         }else{
-          //sprite.setVelocityX(0);
-          //sprite.setVelocityY(0);
-
-          ////sprite.x = nextr.x*16+8;
-          ////sprite.y = nextr.y*16+8;
-
+          moveaction_tween=()=>{
           //if (routeresult.length >0){
             tween = scene.tweens.add({
               targets: sprite,
@@ -251,9 +249,26 @@ function gObjectEnemyTr(scene, x, y){
             });
             tween.play();
             sprite.tween = tween; 
+          }
+
+          moveaction_moveTo =()=>{  
+
+            // if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR){//} && gt.index == BG.FLOOR){
+              scene.physics.moveTo(
+                sprite,
+                nextr.x*16+8,
+                nextr.y*16+8,
+                60//,
+                //maxtime
+              );
+            //}
+          }
+          //moveaction_tween();
+          if (!nextrouteget) moveaction_moveTo();
           //}
           //effectbreak(nextr.x*16+8, nextr.y*16+8);
           runmode = 1;
+          
         }
         if (gt2.index == BG.FLAG) runmode=2;
         //console.log(gt2.index + " " + gt.index+" "+runmode);

@@ -144,19 +144,10 @@ function gObjectPlayer(scene, x, y){
             
             }else{
               if (gt.index == BG.BLOCK){
-
-                let box = effcts.get(//create(
-                Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
-                Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8,"blocks");
-                box.setCollideWorldBounds(false);
-                box.setScale(1);
-                box.setPushable(false);
-                box.anims.play("break");
-                box.on(Phaser.Animations.Events.ANIMATION_COMPLETE, ()=>{
-                  //box.setVisible(false);
-                  //box.setActive(false);
-                  box.destroy();
-                },this);
+                effectbreak(
+                  Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
+                  Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8
+                );
                 seffect[2].play();
                 layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
               }
@@ -199,69 +190,134 @@ function gObjectPlayer(scene, x, y){
     }
 
     if (mvmode.type){
-      let gt_ud = layer.getTileAtWorldXY(
-        sprite.x, 
-        sprite.y + mvmode.vy*10
-      );
 
-      let gt_lr = layer.getTileAtWorldXY(
-        sprite.x + mvmode.vx*10, 
-        sprite.y
-      );
+      moveaction_tw =()=>{  
+        let gt_ud = layer.getTileAtWorldXY(
+          sprite.x, 
+          sprite.y + mvmode.vy*10
+        );
 
-      let gt = layer.getTileAtWorldXY(
-        sprite.x + mvmode.vx*10, 
-        sprite.y + mvmode.vy*10
-      );
+        let gt_lr = layer.getTileAtWorldXY(
+          sprite.x + mvmode.vx*10, 
+          sprite.y
+        );
 
-      if (!(Boolean(gt_ud)&& Boolean(gt_lr) && Boolean(gt))) return; //err
-      if (!(("index" in gt_ud)&&("index" in gt_lr)&&("index" in gt))) return; //err
+        let gt = layer.getTileAtWorldXY(
+          sprite.x + mvmode.vx*10, 
+          sprite.y + mvmode.vy*10
+        );
 
-      if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR && gt.index == BG.FLOOR){
-       //console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);
+        if (!(Boolean(gt_ud)&& Boolean(gt_lr) && Boolean(gt))) return; //err overrun
+        if (!(("index" in gt_ud)&&("index" in gt_lr)&&("index" in gt))) return; //err overrun
 
-        if (moveready){
- 
-          tween = scene.tweens.add({
-            targets: sprite,
-            x: (Math.trunc((sprite.x+7)/16)+mvmode.vx)*16+7,
-            y: (Math.trunc((sprite.y+7)/16)+mvmode.vy)*16+7,
-            ease: 'Linear',       // 'Linear','Cubic', 'Elastic', 'Bounce', 'Back'
-            duration: 200,
-            repeat: 0,            // -1: infinity
-            yoyo: false
-          });
-          tween.play();
-          tween.on("complete",()=>{moveready = true;});
-          
-          moveready = false;
-          /*
-          effectbreak(
-            (Math.trunc((sprite.x+7)/16)+mvmode.vx)*16+7
-            ,(Math.trunc((sprite.y+7)/16)+mvmode.vy)*16+7
-          );
-          */
+        if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR && gt.index == BG.FLOOR){
+        //console.log(mvmode.vx + "," + mvmode.vy + ":" + moveready);
+
+          if (moveready){
+  
+            tween = scene.tweens.add({
+              targets: sprite,
+              x: (Math.trunc((sprite.x+7)/16)+mvmode.vx)*16+7,
+              y: (Math.trunc((sprite.y+7)/16)+mvmode.vy)*16+7,
+              ease: 'Linear',       // 'Linear','Cubic', 'Elastic', 'Bounce', 'Back'
+              duration: 200,
+              repeat: 0,            // -1: infinity
+              yoyo: false
+            });
+            tween.play();
+            tween.on("complete",()=>{moveready = true;});
+            
+            moveready = false;
+            /*
+            effectbreak(
+              (Math.trunc((sprite.x+7)/16)+mvmode.vx)*16+7
+              ,(Math.trunc((sprite.y+7)/16)+mvmode.vy)*16+7
+            );
+            */
+          }
         }
       }
-      //if (tween.ANIMATION_COMPLETE){
-      /*
-      if (mvmode.dur<30){
-        sprite.setVelocityX(mvmode.vx*(SPEED/1.5));
-        sprite.setVelocityY(mvmode.vy*(SPEED/1.5));
-      }else{
-        sprite.setVelocityX(mvmode.vx*SPEED);
-        sprite.setVelocityY(mvmode.vy*SPEED);
+
+      moveaction_moveTo =()=>{  
+
+       // if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR){//} && gt.index == BG.FLOOR){
+          scene.physics.moveTo(
+            sprite,
+            (Math.trunc((sprite.x+6)/16)+mvmode.vx)*16+8,
+            (Math.trunc((sprite.y+6)/16)+mvmode.vy)*16+8,
+            SPEED//,
+            //maxtime
+          );
+        //}
       }
-      */
-      /*
-      if (mvmode.dur<30){
-        if (mvmode.vx != 0) sprite.setVelocityX(mvmode.vx*(SPEED/3));
-        if (mvmode.vy != 0) sprite.setVelocityY(mvmode.vy*(SPEED/3));
-      }else{
-        if (mvmode.vx != 0) sprite.setVelocityX(mvmode.vx*SPEED);
-        if (mvmode.vy != 0) sprite.setVelocityY(mvmode.vy*SPEED);
+
+      moveaction_slip =()=>{
+        let gt = layer.getTileAtWorldXY(
+          sprite.x + mvmode.vx*10, 
+          sprite.y + mvmode.vy*10
+        );
+
+        let vx = 0;
+        let vy = 0;
+
+        if ((mvmode.vx != 0)&&(mvmode.vy == 0)){
+
+            let gt_u = layer.getTileAtWorldXY(
+            sprite.x + mvmode.vx*10, 
+            sprite.y ,
+          );
+
+          let gt_d = layer.getTileAtWorldXY(
+            sprite.x + mvmode.vx*10, 
+            sprite.y + 15
+          );
+
+          //if ((gt != BG.FLOOR)) mvmode.vx = 0; 
+
+          if ((gt_u == BG.FLOOR) && (gt_d != BG.FLOOR)) vy = -1; 
+          if ((gt_u != BG.FLOOR) && (gt_d == BG.FLOOR)) vy = 1;
+        }  
+
+        if ((mvmode.vx == 0)&&(mvmode.vy != 0)){
+
+          let gt_l = layer.getTileAtWorldXY(
+            sprite.x  , 
+            sprite.y + mvmode.vy*10
+          );
+
+          let gt_r = layer.getTileAtWorldXY(
+            sprite.x + 15, 
+            sprite.y + mvmode.vy*10
+          );
+
+          //if ((gt != BG.FLOOR)) mvmode.vy = 0; 
+
+          if ((gt_l == BG.FLOOR) && (gt_r != BG.FLOOR)) vx = -1; 
+          if ((gt_l != BG.FLOOR) && (gt_r == BG.FLOOR)) vx = 1;
+        }  
+        
+        if (vx != 0 || vy != 0){
+          //sprite.setCircle(1);
+          if (vx != 0) sprite.setVelocityX((vx)*SPEED);
+          if (vy != 0) sprite.setVelocityY((vy)*SPEED);
+        }
+      }  
+      
+      moveaction_normal =()=>{
+        if (mvmode.dur<150){
+          if (mvmode.vx != 0) sprite.setVelocityX(mvmode.vx*(SPEED));
+          if (mvmode.vy != 0) sprite.setVelocityY(mvmode.vy*(SPEED));
+        }else{
+          sprite.setVelocityX(mvmode.vx*SPEED);
+          sprite.setVelocityY(mvmode.vy*SPEED);
+        }
       }
-      */        
+ 
+      //moveaction_tw();
+      moveaction_moveTo();
+      //moveaction_slip();
+      //moveaction_normal();
+ 
       if (Boolean(mvmode.anim)){
         sprite.anims.play((mvmode.push?'push_':'')+mvmode.anim, true);}
     }else{
@@ -271,8 +327,11 @@ function gObjectPlayer(scene, x, y){
       //before_pos.vy = sprite.body.velocity.y; 
       //if (Math.trunc((sprite.x-7))%16 <2 ) sprite.setVelocityX(0);
       //if (Math.trunc((sprite.y-7))%16 <2 ) sprite.setVelocityY(0);
-        //sprite.setVelocityX(0);
-        //sprite.setVelocityY(0);
+      
+      if (mvmode.dur == 0){
+        sprite.setVelocityX(0);
+        sprite.setVelocityY(0);
+      }
       
     }
   }
