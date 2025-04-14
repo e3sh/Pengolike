@@ -174,14 +174,14 @@ function mazemake(layer, w , h,
 
         let flg = false;
         for (let i in map_wall){
-            if (i<1 || i>= MAP_W-1) continue;
+            if (i<1 || i>= MAP_H-1) continue;
             for (let j in map_wall[i]){
-                if (j<1 || j>= MAP_H-1) continue;
+                if (j<1 || j>= MAP_W-1) continue;
                 if (map_wall[i][j]){
-                    if (LAYER.getTileAt(i,j) != BGBLOCK) LAYER.putTileAt(BGBLOCK,i,j);
+                    if (LAYER.getTileAt(j,i) != BGBLOCK) LAYER.putTileAt(BGBLOCK,j,i);
                     //flg = true;
                 } else {
-                    if (LAYER.getTileAt(i,j) != BGFLOOR) LAYER.putTileAt(BGFLOOR,i,j);
+                    if (LAYER.getTileAt(j,i) != BGFLOOR) LAYER.putTileAt(BGFLOOR,j,i);
                     flg = true;
                 }
             }

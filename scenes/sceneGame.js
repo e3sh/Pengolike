@@ -14,7 +14,7 @@ class GameScene extends Phaser.Scene {
           WALL:7, 
           FLAG:49, 
           BFLAG:50, 
-          MAP_W:17, 
+          MAP_W:49,//17, 
           MAP_H:17 
         },
 
@@ -68,7 +68,7 @@ class GameScene extends Phaser.Scene {
       for (let i=0; i<MAP_H; i++){//y
         level[i] = [];
         for (let j=0; j<MAP_W; j++){//x
-          level[i][j] = BGBLOCK;//Phaser.Math.Between(0,39);
+          level[i][j] = Phaser.Math.Between(0,39);//BGBLOCK;
         }
       }
 
@@ -133,7 +133,13 @@ class GameScene extends Phaser.Scene {
     
         //camera setup
       this.cameras.main.zoom = 2.0;
-      this.cameras.main.centerOn(132, 150);
+      //this.cameras.main.centerOn(132, 150);
+      this.cameras.main.setBounds(
+        0,
+        0,
+        this.game.canvas.width-16,
+        this.game.canvas.height/2
+      );
       
       //collision setting
       const hitenemy = (p, b)=>{
@@ -248,6 +254,7 @@ class GameScene extends Phaser.Scene {
       this.wp.push(new gObjectPlayer(this, 0,0));
       this.player = this.wp[0].gameobject;
       //this.player.setSize(15,15);
+      this.cameras.main.startFollow(this.player);
 
       for (let i=0; i<1; i++){
         const w = new gObjectEnemyTr(this, 0, 0);
@@ -329,7 +336,9 @@ class GameScene extends Phaser.Scene {
               //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
             }
           }
-          this.layer.putTileAt(this.maze.BG.FLAG, 9, 13);
+          this.layer.putTileAt(this.maze.BG.FLAG,
+             Math.trunc(this.maze.MW/2)+1, Math.trunc(this.maze.MH/2)+5
+            );
 
           //this.zkey.lock = false;
 
