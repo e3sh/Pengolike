@@ -149,8 +149,11 @@ function gObjectEnemyTr(scene, x, y){
       (Math.abs(sprite.body.velocity.y)<1));
     //b2 = true;
 
-    //if (b1 && b2 && growcount > 0) 
-    if (stepCount >15) 
+    let wdx = Math.abs((sprite.x+8) - (nextr.x+nextr.vx)*16);
+    let wdy = Math.abs((sprite.y+8) - (nextr.y+nextr.vy)*16);
+
+    if (wdx > 32 || wdy > 32) 
+    //if (stepCount >15) 
     {
       routeresult = [];
       //growcount += WAIT;
@@ -258,7 +261,7 @@ function gObjectEnemyTr(scene, x, y){
                 sprite,
                 (nextr.x + nextr.vx)*16+8,
                 (nextr.y + nextr.vy)*16+8,
-                40//,
+                30//,
                 //maxtime
               );
             //}
@@ -267,7 +270,7 @@ function gObjectEnemyTr(scene, x, y){
           //if (!nextrouteget)
           moveaction_moveTo();
           //}
-          //effectbreak(nextr.x*16+8, nextr.y*16+8);
+          //effectbreak((nextr.x + nextr.vx)*16+8, (nextr.y + nextr.vy)*16+8);
           runmode = 1;
           
         }

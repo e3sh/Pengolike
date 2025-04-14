@@ -19,7 +19,7 @@ class GameScene extends Phaser.Scene {
         },
 
         PLAYER:{SPEED:80}, //SLOW < FAST //move vector Default:60
-        ENEMY:{ WAIT:20}   //FAST < SLOW //wait step   Default:30
+        ENEMY:{ WAIT:30}   //FAST < SLOW //wait step   Default:30
       }
     }
 
