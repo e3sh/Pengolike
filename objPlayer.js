@@ -243,8 +243,8 @@ function gObjectPlayer(scene, x, y){
        // if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR){//} && gt.index == BG.FLOOR){
           scene.physics.moveTo(
             sprite,
-            (Math.trunc((sprite.x+6)/16)+mvmode.vx)*16+8,
-            (Math.trunc((sprite.y+6)/16)+mvmode.vy)*16+8,
+            sprite.x + mvmode.vx*16,//(Math.trunc((sprite.x+6)/16)+mvmode.vx)*16+8,
+            sprite.y + mvmode.vy*16,//(Math.trunc((sprite.y+6)/16)+mvmode.vy)*16+8,
             SPEED//,
             //maxtime
           );

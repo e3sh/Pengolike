@@ -256,15 +256,16 @@ function gObjectEnemyTr(scene, x, y){
             // if (gt_ud.index == BG.FLOOR && gt_lr.index == BG.FLOOR){//} && gt.index == BG.FLOOR){
               scene.physics.moveTo(
                 sprite,
-                nextr.x*16+8,
-                nextr.y*16+8,
-                60//,
+                (nextr.x + nextr.vx)*16+8,
+                (nextr.y + nextr.vy)*16+8,
+                40//,
                 //maxtime
               );
             //}
           }
           //moveaction_tween();
-          if (!nextrouteget) moveaction_moveTo();
+          //if (!nextrouteget)
+          moveaction_moveTo();
           //}
           //effectbreak(nextr.x*16+8, nextr.y*16+8);
           runmode = 1;
