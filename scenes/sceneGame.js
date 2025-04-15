@@ -14,12 +14,12 @@ class GameScene extends Phaser.Scene {
           WALL:7, 
           FLAG:49, 
           BFLAG:50, 
-          MAP_W:49,//17, 
-          MAP_H:17 
+          MAP_W:49,//17,  MAP縦横幅は奇数である必要があります
+          MAP_H:35 //17 
         },
 
         PLAYER:{SPEED:80}, //SLOW < FAST //move vector Default:60
-        ENEMY:{ WAIT:30}   //FAST < SLOW //wait step   Default:30
+        ENEMY:{ INITCOUNT:10, WAIT:30}   //FAST < SLOW //wait step   Default:30
       }
     }
 
@@ -132,13 +132,17 @@ class GameScene extends Phaser.Scene {
       this.music = this.sound.add("bgm");
     
         //camera setup
+      this.cameras.main.setViewport(0,0,800,600-48);
+
       this.cameras.main.zoom = 2.0;
       //this.cameras.main.centerOn(132, 150);
       this.cameras.main.setBounds(
         0,
         0,
-        this.game.canvas.width-16,
-        this.game.canvas.height/2
+        MAP_W*16,
+        MAP_H*16
+        //this.game.canvas.width-16,
+        //this.game.canvas.height
       );
       
       //collision setting
@@ -197,10 +201,10 @@ class GameScene extends Phaser.Scene {
           this.timerOneShot = this.time.delayedCall(500, ()=>{
             const tween = this.tweens.add({
               targets: p,
-              x: b.x,
-              y: b.y,
-              ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
-              duration: 100,
+              x: this.player.x,//b.x,
+              y: this.player.y,//b.y,
+              ease: "BounceOut",//'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+              duration: 250,
               repeat: 0,            // -1: infinity
               yoyo: false
             });
@@ -256,10 +260,10 @@ class GameScene extends Phaser.Scene {
       //this.player.setSize(15,15);
       this.cameras.main.startFollow(this.player);
 
-      for (let i=0; i<1; i++){
+      for (let i=0; i<this.GAMECONFIG.ENEMY.INITCOUNT; i++){
         const w = new gObjectEnemyTr(this, 0, 0);
         w.gameobject.deadstate = true;
-        w.BONUSreceived = true;
+        w.gameobject.BONUSreceived = true;
         w.gameobject.setVisible(false);
         this.wp.push(w);
       }
@@ -352,12 +356,14 @@ class GameScene extends Phaser.Scene {
             this.xtalblockerr = false;
             this.events.emit("eracePG");
           }
-        }
+        } 
       }else{        
         //map genarate anim drawing (maze ready == false)
         this.maze.draw(false);
         this.maze.step();this.maze.step();
-
+        //while (!this.maze.ready){
+        for (let i=0; i<10; i++) this.maze.step();
+        //}
         this.player.x = this.maze.MW/2*16+16;
         this.player.y = this.maze.MH/2*16+16;
         delete this.player.invincible;
