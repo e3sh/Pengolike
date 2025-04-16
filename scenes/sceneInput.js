@@ -16,6 +16,9 @@ class inputScene extends Phaser.Scene {
   zkey;
   xkey;
 
+  pageup;
+  pagedown;
+
   duration;
   
   preload() {}
@@ -28,7 +31,9 @@ class inputScene extends Phaser.Scene {
       left: "A",
       right: "D",
       zkey: "Z",
-      xkey: "X"
+      xkey: "X",
+      pageup: "PAGE_UP",
+      pagedown: "PAGE_DOWN"
     }); // keyObjects.up, keyObjects.down, keyObjects.left, keyObjects.right
 
     this.#cKeys = this.input.keyboard.createCursorKeys();
@@ -43,6 +48,9 @@ class inputScene extends Phaser.Scene {
     this.space = this.#cKeys.space.isDown;
     this.zkey = this.#keyObj.zkey.isDown;
     this.xkey = this.#keyObj.xkey.isDown;
+
+    this.pageup = this.#keyObj.pageup.isDown;
+    this.pagedown = this.#keyObj.pagedown.isDown;
 
     this.duration = {
       up: Math.trunc(this.#cKeys.up.getDuration())
@@ -73,6 +81,8 @@ class inputScene extends Phaser.Scene {
     +"space:" + this.space + "/" + this.duration.space + "ms\n"
     +"zkey :"+ this.zkey + "/" + this.duration.z + "ms\n"
     +"xkey :"+ this.xkey + "/" + this.duration.x + "ms\n"
+    +"PageUp   :"+ this.pageup + "\n"
+    +"PageDown :"+ this.pagedown + "\n"
     //+"duration(ms):"+ this.duration + "\n"
 
     return st;

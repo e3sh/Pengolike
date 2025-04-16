@@ -9,9 +9,9 @@ class TitleScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    this.add.text(20, 20, '5ch donichi thread 16 2025/4/6-14 theme (defend/guard/protect etc)\nDevelop version', { fontSize: '12px', fill: '#FFF' });
-    this.add.text(400-100, 130, 'PeDeF', { fontSize: '80px', fill: '#FFF' });
-    this.add.text(400-120, 200, 'Pengin Defence Flag', { fontSize: '24px', fill: '#FFF' });
+    this.add.text(20, 20, 'phaser3 funcion try/practice program ', { fontSize: '12px', fill: '#FFF' });
+    this.add.text(400-100, 130, 'Pengolike', { fontSize: '40px', fill: '#FFF' });
+    this.add.text(400-120, 200, 'PHASER3 my practice', { fontSize: '24px', fill: '#FFF' });
 
     this.add.text(
       440, 288

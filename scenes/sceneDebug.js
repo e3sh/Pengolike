@@ -44,6 +44,7 @@ class UIDebugScene extends Phaser.Scene {
 
     this.textL.setVisible(this.homekey);
     this.textR.setVisible(this.homekey);
+    
 
     const poslist = (group)=>{
       let st = "";
@@ -65,6 +66,8 @@ class UIDebugScene extends Phaser.Scene {
     };
     
     const gamemain = this.gm;
+
+    gamemain.infolayer.setVisible(this.homekey);
 
     let systemstatus = "-- SystemStatus --\n"
       +"FPS:"+Math.trunc(1000/game.loop.delta) + "\n"

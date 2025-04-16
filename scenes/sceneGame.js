@@ -8,7 +8,8 @@ class GameScene extends Phaser.Scene {
         XTALBONUS:5,//BoxLineBounus
         RESETCOST:30, //
 
-        BG: {BLOCK:0, 
+        BG: {BLOCK:0,
+          TOP:2, 
           BONUS:10, 
           FLOOR:44, 
           WALL:7, 
@@ -32,6 +33,8 @@ class GameScene extends Phaser.Scene {
     mobs;
 
     layer;
+    toptile;
+    infoLayer;
 
     //cursors;
     //zkey;
@@ -55,6 +58,8 @@ class GameScene extends Phaser.Scene {
 
     xtalblockerr;
 
+    zoom
+
     preload() {
 
       //map create
@@ -75,6 +80,14 @@ class GameScene extends Phaser.Scene {
       const map = this.make.tilemap({ data: level, tileWidth: 16, tileHeight: 16 });
       const tiles = map.addTilesetImage("bgtiles");
       this.layer = map.createLayer(0, tiles, 0, 0);
+      this.toptile =  map.createBlankLayer(1, tiles, 0, -4);
+      this.toptile.setDepth(1);
+
+      const tiles2 = map.addTilesetImage("pcgasc");
+      this.infolayer = map.createBlankLayer(2, tiles2, 0, 0);
+      this.infolayer.setDepth(2);
+
+      this.infolayer.setVisible(false);
 
       this.maze = new mazemake(this.layer, MAP_W, MAP_H, this.GAMECONFIG.BG);
 
@@ -100,6 +113,7 @@ class GameScene extends Phaser.Scene {
       
       const blockstop = (p, b)=>{
         this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
+        this.toptile.putTileAtWorldXY(this.maze.BG.TOP, p.x, p.y);
         this.seffect[1].play();
         p.destroy();
         this.events.emit("layerChange");
@@ -134,7 +148,9 @@ class GameScene extends Phaser.Scene {
         //camera setup
       this.cameras.main.setViewport(0,0,800,600-48);
 
-      this.cameras.main.zoom = 2.0;
+      this.zoom = 3.0
+
+      this.cameras.main.zoom = this.zoom;
       //this.cameras.main.centerOn(132, 150);
       this.cameras.main.setBounds(
         0,
@@ -291,6 +307,16 @@ class GameScene extends Phaser.Scene {
           this.scene.stop("Debug");
           this.scene.start("Title");//restart();
         }
+      }
+
+      if (this.inputc.pageup || this.inputc.pagedown){
+        this.zoom -= (this.inputc.pageup)?0.1:0;
+        this.zoom += (this.inputc.pagedown)?0.1:0;
+
+        if (this.zoom < 1.0) this.zoom = 1.0;
+        if (this.zoom > 5.0) this.zoom = 5.0;
+        
+        this.cameras.main.zoom = this.zoom;
       }
 
       for (let i in this.wp){this.wp[i].update();}
@@ -455,6 +481,7 @@ class GameScene extends Phaser.Scene {
         }
 
         if (this.inputc.zkey){
+          //this.infolayer.putTileAt(Phaser.Math.Between(1,90),Math.trunc(this.player.x/16),Math.trunc(this.player.y/16));
           if (this.xtalblockerr) {
             if (this.basehp <= this.GAMECONFIG.RESETCOST) this.basehp += this.GAMECONFIG.RESETCOST;
             this.events.emit("eracePG");

@@ -271,6 +271,8 @@ function gObjectEnemyTr(scene, x, y){
           moveaction_moveTo();
           //}
           //effectbreak((nextr.x + nextr.vx)*16+8, (nextr.y + nextr.vy)*16+8);
+          scene.infolayer.putTileAt(0,Math.trunc(sprite.x/16),Math.trunc(sprite.y/16));
+          scene.infolayer.putTileAt((routeresult.length%10)+16, nextr.x + nextr.vx, nextr.y + nextr.vy);
           runmode = 1;
           
         }
@@ -342,7 +344,10 @@ function gObjectEnemyTr(scene, x, y){
             Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
             Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8
           );
-          if (gt.index == BG.BLOCK) layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+          if (gt.index == BG.BLOCK) {
+            layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+            scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+          }
           if (gt.index == BG.FLAG) {
             gamemain = scene.scene.get("GameMain");
             gamemain.events.emit("baseattack");

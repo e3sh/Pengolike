@@ -10,7 +10,7 @@
 //map.draw(map.floo, "dsp_e");
 
 function mazemake(layer, w , h,
-    bg = {BLOCK:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h}
+    bg = {BLOCK:6, TOP:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h}
  ){
 
     let map_wall;
