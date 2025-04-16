@@ -126,7 +126,7 @@ function gObjectPlayer(scene, x, y){
               //layer.putTileAtWorldXY(gt.index, sprite.x + mvmode.vx*26, sprite.y + mvmode.vy*26);
               let blocktype = gt.index;//次の行でtileを書き換えるので数値を保管する(Objectなのでgtでも参照される)
               layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
-              scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+              scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10 -3);
               let box = blocks.get(//create(
                 Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
                 Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8,"blocks"
@@ -155,7 +155,7 @@ function gObjectPlayer(scene, x, y){
                 );
                 seffect[2].play();
                 layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
-                scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+                scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10 -3);
               }
             }
           }
@@ -163,7 +163,7 @@ function gObjectPlayer(scene, x, y){
           blockpull=()=>{
             let blocktype = gt.index;
             layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
-            scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+            scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10 -3);
             let box = blocks.get(//create(
               Math.trunc((sprite.x + mvmode.vx*10)/16)*16+8,
               Math.trunc((sprite.y + mvmode.vy*10)/16)*16+8,"blocks"

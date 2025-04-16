@@ -8,8 +8,8 @@ class GameScene extends Phaser.Scene {
         XTALBONUS:5,//BoxLineBounus
         RESETCOST:30, //
 
-        BG: {BLOCK:0,
-          TOP:2, 
+        BG: {BLOCK:2,
+          TOP:0, 
           BONUS:10, 
           FLOOR:44, 
           WALL:7, 
@@ -80,7 +80,7 @@ class GameScene extends Phaser.Scene {
       const map = this.make.tilemap({ data: level, tileWidth: 16, tileHeight: 16 });
       const tiles = map.addTilesetImage("bgtiles");
       this.layer = map.createLayer(0, tiles, 0, 0);
-      this.toptile =  map.createBlankLayer(1, tiles, 0, -4);
+      this.toptile =  map.createBlankLayer(1, tiles, 0, -3);
       this.toptile.setDepth(1);
 
       const tiles2 = map.addTilesetImage("pcgasc");
@@ -89,7 +89,8 @@ class GameScene extends Phaser.Scene {
 
       this.infolayer.setVisible(false);
 
-      this.maze = new mazemake(this.layer, MAP_W, MAP_H, this.GAMECONFIG.BG);
+
+      this.maze = new mazemake( this.layer, this.toptile, MAP_W, MAP_H, this.GAMECONFIG.BG);
 
       this.maze.init();
 
@@ -113,7 +114,12 @@ class GameScene extends Phaser.Scene {
       
       const blockstop = (p, b)=>{
         this.layer.putTileAtWorldXY(p.boxtype, p.x, p.y);
-        this.toptile.putTileAtWorldXY(this.maze.BG.TOP, p.x, p.y);
+        if (p.boxtype == this.maze.BG.BLOCK){
+          this.toptile.putTileAtWorldXY(this.maze.BG.TOP, p.x, p.y);
+        }
+        if (p.boxtype == this.maze.BG.BONUS){
+          this.toptile.putTileAtWorldXY(this.maze.BG.BONUS, p.x, p.y);
+        }
         this.seffect[1].play();
         p.destroy();
         this.events.emit("layerChange");
@@ -354,6 +360,7 @@ class GameScene extends Phaser.Scene {
             let num = Phaser.Math.Between(0, bplist.length-1);
             let bp = bplist[num];  
             this.layer.putTileAt(this.maze.BG.BONUS,bp.x,bp.y);
+            this.toptile.putTileAt(this.maze.BG.BONUS,bp.x,bp.y);
             let w = bplist.splice(num,1);//delete use block
             //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
           }
@@ -362,6 +369,7 @@ class GameScene extends Phaser.Scene {
             if (num >= 0){    
               let bp = bplist[num];  
               this.layer.putTileAt(this.maze.BG.WALL,bp.x,bp.y);
+              this.toptile.removeTileAt(bp.x,bp.y);
               let w = bplist.splice(num,1);//delete use block
               //console.log(num +"/" + bplist.length + " " + Object.entries(w[0]));
             }

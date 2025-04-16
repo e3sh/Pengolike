@@ -9,9 +9,8 @@
 //map.draw(map.wall, "dsp_d");//DOM <p> Draw wall(array);
 //map.draw(map.floo, "dsp_e");
 
-function mazemake(layer, w , h,
-    bg = {BLOCK:6, TOP:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h}
- ){
+function mazemake(layer, top, w , h, bg){
+    //{BLOCK:6, TOP:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h}
 
     let map_wall;
     let map_floor;
@@ -36,10 +35,11 @@ function mazemake(layer, w , h,
     let r;
 
     const LAYER = layer;
+    const TOPLAYER = top;
     const MAP_W = w;
     const MAP_H = h;
 
-    this.BG = bg;//{BLOCK:0, BONUS:10, FLOOR:44, WALL:7, FLAG:49, BFLAG:50, MAP_W:w, MAP_H:h};
+    this.BG = bg;
 
     const BGBLOCK = bg.BLOCK;
     const BGFLOOR = bg.FLOOR; 
@@ -178,10 +178,16 @@ function mazemake(layer, w , h,
             for (let j in map_wall[i]){
                 if (j<1 || j>= MAP_W-1) continue;
                 if (map_wall[i][j]){
-                    if (LAYER.getTileAt(j,i) != BGBLOCK) LAYER.putTileAt(BGBLOCK,j,i);
+                    if (LAYER.getTileAt(j,i) != BGBLOCK) {
+                        LAYER.putTileAt(BGBLOCK,j,i);
+                        TOPLAYER.putTileAt(this.BG.TOP,j,i);
+                    }
                     //flg = true;
                 } else {
-                    if (LAYER.getTileAt(j,i) != BGFLOOR) LAYER.putTileAt(BGFLOOR,j,i);
+                    if (LAYER.getTileAt(j,i) != BGFLOOR) {
+                        LAYER.putTileAt(BGFLOOR,j,i);
+                        TOPLAYER.removeTileAt(j,i);
+                    }
                     flg = true;
                 }
             }
@@ -190,6 +196,7 @@ function mazemake(layer, w , h,
             for (let i=1; i<MAP_H; i=i+2){//y
                 for (let j=1; j<MAP_W; j=j+2){//x
                     LAYER.putTileAt(BGFLOOR,j, i);
+                    TOPLAYER.removeTileAt(j,i);
                 }
               }
         }

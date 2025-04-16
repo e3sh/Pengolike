@@ -72,6 +72,8 @@ function gObjectEnemyTr(scene, x, y){
       let num = Phaser.Math.Between(0, cblist.length-1);
       let bp = cblist[num];  
       layer.putTileAt(BG.FLOOR,bp.x,bp.y);
+      scene.toptile.removeTileAt(bp.x, bp.y);
+
       sprite.x = bp.x*16+8;
       sprite.y = bp.y*16+8;
       effectbreak(sprite.x, sprite.y);
@@ -346,7 +348,7 @@ function gObjectEnemyTr(scene, x, y){
           );
           if (gt.index == BG.BLOCK) {
             layer.putTileAtWorldXY(BG.FLOOR, sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
-            scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10);
+            scene.toptile.removeTileAtWorldXY(sprite.x + mvmode.vx*10, sprite.y + mvmode.vy*10 -3);
           }
           if (gt.index == BG.FLAG) {
             gamemain = scene.scene.get("GameMain");
