@@ -128,6 +128,11 @@ function setupAnims(scene){
         frameRate: 8, repeat: -1
     });
 
+    scene.anims.create({ key: 'ball',
+        frames: scene.anims.generateFrameNumbers('blocks', { start: 37, end: 37 }),
+        frameRate: 8, repeat: -1
+    });
+
     //scene.events.on("AnimSupComp",()=>{},this);
 
 }

@@ -215,16 +215,27 @@ class GameScene extends Phaser.Scene {
           p.setTint("0xff7f7f");
           this.killcount++;
           p.deadstate = true;
+          if ("kill" in b) b.kill++; else b.kill=1;
           if ("tween" in p) p.tween.stop();
           p.setVelocityX(b.body.velocity.x);
           p.setVelocityY(b.body.velocity.y);
           
           
           this.timerOneShot = this.time.delayedCall(500, ()=>{
+            
+            let tx = b.x;
+            let ty = b.y;
+
+            if (b.kill>3){
+              tx = this.player.x;
+              ty = this.player.y;
+              p.clearTint();
+              p.anims.play("ball");
+            }
             const tween = this.tweens.add({
               targets: p,
-              x: this.player.x,//b.x,
-              y: this.player.y,//b.y,
+              x: tx,
+              y: ty,
               ease: "BounceOut",//'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
               duration: 250,
               repeat: 0,            // -1: infinity
@@ -234,7 +245,6 @@ class GameScene extends Phaser.Scene {
             
           }, this
           );
-          
           p.anims.play("kout_e");
         }
       }
